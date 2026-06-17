@@ -1,4 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `ProviderBase` is exported from the `misc` entrypoint in Riverpod 3.x.
+import 'package:flutter_riverpod/misc.dart';
 
 class TalkerRiverpodLoggerSettings {
   const TalkerRiverpodLoggerSettings({

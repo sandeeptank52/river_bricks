@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 ///This
-extension CacheExtension<T> on Ref {
-  KeepAliveLink cacheFor([Duration duration = const Duration(seconds: 3)]) {
+extension CacheExtension on Ref {
+  // Riverpod 3 no longer exports the `KeepAliveLink` type publicly, so the
+  // link is kept locally (its type is inferred) and this returns void.
+  void cacheFor([Duration duration = const Duration(seconds: 3)]) {
     Timer? timer;
     // prevents being disposed
     final link = keepAlive();
@@ -27,8 +29,6 @@ extension CacheExtension<T> on Ref {
     // });
 
     timer = Timer(duration, link.close);
-
-    return link;
   }
 
   /// Refreshes the provider's value automatically at a specified interval.

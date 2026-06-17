@@ -53,7 +53,12 @@ final dioProvider = Provider.autoDispose<Dio>(
       //   },
       // ),
     ]);
-    fixBadCertificate(dio: dio);
+    // SECURITY: relaxing TLS certificate validation is only done in debug
+    // builds (e.g. to talk to a local server with a self-signed cert). Trusting
+    // all certificates in production enables man-in-the-middle attacks.
+    if (kDebugMode) {
+      fixBadCertificate(dio: dio);
+    }
     return dio;
   },
   name: 'dioProvider',
