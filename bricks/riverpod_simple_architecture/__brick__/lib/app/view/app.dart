@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +10,10 @@ import 'package:{{project_name.snakeCase()}}/core/theme/theme_controller.dart';
 import 'package:{{project_name.snakeCase()}}/i18n/strings.g.dart';
 import 'package:{{project_name.snakeCase()}}/shared/helper/global_helper.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/no_internet_widget.dart';
-import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
+{{#responsive}}import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
+{{/responsive}}
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 
 ///This class holds Material App or Cupertino App
 ///with routing,theming and locale setup .
@@ -34,7 +34,7 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       //TODO: change app name
-      title: 'example App',
+      title: AppConfig.appTitle,
       theme: Themes.theme,
       darkTheme: Themes.darkTheme,
       themeMode: currentTheme,
@@ -51,20 +51,26 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
         if (mounted) {
           ///Used for responsive design
           ///Here you can define breakpoint and how the responsive should work
+{{#responsive}}
           child = ResponsiveBreakPointWrapper(
             firstFrameWidget: Container(
               color: Colors.white,
             ),
             child: child!,
           );
+{{/responsive}}
+{{^responsive}}
+          child = child!;
+{{/responsive}}
 
           /// Add support for maximum text scale according to changes in
           /// accessibilty in sytem settings
           final mediaquery = MediaQuery.of(context);
           child = MediaQuery(
             data: mediaquery.copyWith(
-              textScaler:
-                  TextScaler.linear(mediaquery.textScaleFactor.clamp(0, 1)),
+              textScaler: mediaquery.textScaler.clamp(
+                maxScaleFactor: 1,
+              ),
             ),
             child: child,
           );
@@ -74,20 +80,20 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
           child = AnnotatedRegion<SystemUiOverlayStyle>(
             value: currentTheme == ThemeMode.dark
                 ? SystemUiOverlayStyle.light.copyWith(
-                    statusBarColor: Colors.white.withOpacity(0.4),
+                    statusBarColor: Colors.white.withValues(alpha: 0.4),
                     systemNavigationBarColor: Colors.black,
                     systemNavigationBarDividerColor: Colors.black,
                     systemNavigationBarIconBrightness: Brightness.dark,
                   )
                 : currentTheme == ThemeMode.light
                     ? SystemUiOverlayStyle.dark.copyWith(
-                        statusBarColor: Colors.white.withOpacity(0.4),
+                        statusBarColor: Colors.white.withValues(alpha: 0.4),
                         systemNavigationBarColor: Colors.grey,
                         systemNavigationBarDividerColor: Colors.grey,
                         systemNavigationBarIconBrightness: Brightness.light,
                       )
                     : SystemUiOverlayStyle.dark.copyWith(
-                        statusBarColor: Colors.white.withOpacity(0.4),
+                        statusBarColor: Colors.white.withValues(alpha: 0.4),
                         systemNavigationBarColor: Colors.grey,
                         systemNavigationBarDividerColor: Colors.grey,
                         systemNavigationBarIconBrightness: Brightness.light,

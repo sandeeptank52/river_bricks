@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// StateProvider lives in the `legacy` entrypoint in Riverpod 3.x.
+import 'package:flutter_riverpod/legacy.dart';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:{{project_name.snakeCase()}}/shared/riverpod_ext/cache_extensions.dart';
 
 final cacheStateProvider = StateProvider.autoDispose<int>((ref) {
@@ -79,9 +80,6 @@ class Page2 extends StatelessWidget {
     );
   }
 }
-
-// Mock the KeepAliveLink class
-class MockKeepAliveLink extends Mock implements KeepAliveLink {}
 
 final autoRefreshProvider = StateProvider.autoDispose<int>((ref) {
   ref.autoRefresh(duration: const Duration(seconds: 5));

@@ -15,8 +15,7 @@ import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
 import 'package:spot/spot.dart';
 import '../../helpers/pump_app.dart';
 
-class TestInternetStatusNotifier
-    extends AutoDisposeStreamNotifier<InternetStatus>
+class TestInternetStatusNotifier extends StreamNotifier<InternetStatus>
     implements InternetStatusNotifier {
   final Stream<InternetStatus> Function() streamBuild;
 
@@ -279,9 +278,15 @@ void main() {
       'check no internet pod refreshed on ok clicked on snackbar when error occurred',
       (tester) async {
         final controller = StreamController<InternetStatus>.broadcast();
-        addTearDown(() => controller.close());
+        addTearDown(() {
+          if (!controller.isClosed) controller.close();
+        });
 
         final container = ProviderContainer(
+          // Riverpod 3 auto-retries failed providers; disable that here so a
+          // stream error settles into an AsyncError (which drives the widget's
+          // error UI) instead of retrying forever.
+          retry: (_, _) => null,
           observers: [TalkerRiverpodObserver()],
           overrides: [
             appBoxProvider.overrideWithValue(appBox),
@@ -312,21 +317,23 @@ void main() {
         // Initial pump to build the widget tree
         await tester.pump();
 
-        // Add error to trigger the snackbar
+        // A StreamNotifier keeps an error on an *open* stream as an
+        // AsyncLoading-with-error, so emit the error and close the stream to
+        // complete it — with retries disabled this settles into AsyncError.
         controller.addError(InternetStatus.disconnected);
-        await tester.pumpAndSettle();
+        await controller.close();
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
 
-        // Find the retry button
+        // The error UI exposes a retry button.
         final retryBtn = find.text("Retry");
         expect(retryBtn, findsOneWidget);
 
-        // Add connected status
-        controller.add(InternetStatus.connected);
-        await tester.pump();
-
-        // Tap the retry button
+        // Tapping retry invalidates (refreshes) the connectivity provider.
+        // Avoid pumpAndSettle here: refreshing returns to the loading state
+        // whose progress indicator animates indefinitely.
         await tester.tap(retryBtn);
-        await tester.pumpAndSettle();
+        await tester.pump();
 
         // Verify the state
         final provider = container.read(internetCheckerNotifierPod);

@@ -1,10 +1,11 @@
 name: {{project_name.snakeCase()}}
-description: ""
+description: "{{app_description}}"
 version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.10.8 <4.0.0"
+  flutter: ">=3.38.0"
 
 dependencies:
   flutter:
@@ -13,13 +14,71 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  # Routing
+  auto_route: ^11.1.0
+
+  # Networking
+  dio: ^5.9.2
+
+  # State management
+  flutter_riverpod: ^3.3.2
+
+  # Theming
+  flex_color_scheme: ^8.4.0
+
+  # Local storage (Hive community edition) + secure key storage
+  hive_ce_flutter: ^2.3.4
+  flutter_secure_storage: ^10.3.1
+
+  # Connectivity
+  internet_connection_checker_plus: ^3.1.0
+
+  # Localization (slang)
+  slang: ^4.16.0
+  slang_flutter: ^4.16.0
+  intl: ^0.20.2
+
+  # UI / UX helpers
+  flash: ^3.1.1
+  flutter_displaymode: ^0.7.0
+{{#responsive}}  responsive_framework: ^1.5.1
+{{/responsive}}
+
+  # Utilities
+  duration: ^4.0.3
+  multiple_result: ^5.3.0
+  platform_info: ^5.0.0
+
+  # Logging / observability (the Riverpod observer is vendored under
+  # lib/shared/riverpod_ext/riverpod_observer/, so talker_riverpod_logger is
+  # intentionally not a dependency).
+  talker_flutter: ^5.1.17
+  talker_dio_logger: ^5.1.17
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Lints
+  flutter_lints: ^6.0.0
+  # NOTE: riverpod_lint + custom_lint are intentionally omitted. The current
+  # latest riverpod_lint (3.1.4) requires analyzer_plugin ^0.14.0, which no
+  # stable custom_lint release ships yet, and it also conflicts with the
+  # analyzer required by auto_route_generator 11. Re-add both once the
+  # ecosystem realigns:
+  #   custom_lint: ^0.8.1
+  #   riverpod_lint: ^3.1.4
 
+  # Code generation
+  build_runner: ^2.15.0
+  # 10.6.0 pulls lean_builder (analyzer ^13) which is too new for the current
+  # stable SDK; 10.5.x still pairs with auto_route 11.x.
+  auto_route_generator: ^10.5.0
+  slang_build_runner: ^4.16.0
 
-
+  # Testing
+  mocktail: ^1.0.5
+  spot: ^0.18.0
 
 flutter:
   uses-material-design: true

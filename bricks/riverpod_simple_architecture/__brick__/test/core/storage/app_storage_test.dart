@@ -22,13 +22,11 @@ Future<void> main() async {
     test('throw exception without intialization', () {
       final container = ProviderContainer();
       final exception = errorOf(() => container.read(appStorageProvider));
+      // Riverpod 3 wraps build-time errors in a ProviderException, so match on
+      // the underlying message rather than the wrapper type.
       expect(
-        exception,
-        isA<UnimplementedError>().having(
-          (s) => s.message,
-          'exception',
-          equals('appBoxProvider is not overriden'),
-        ),
+        exception.toString(),
+        contains('appBoxProvider is not overriden'),
       );
     });
     test('intiailize and check box have no data', () {

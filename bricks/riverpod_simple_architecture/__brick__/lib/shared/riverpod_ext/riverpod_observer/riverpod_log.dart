@@ -1,5 +1,6 @@
 import 'package:{{project_name.snakeCase()}}/shared/riverpod_ext/riverpod_observer/talker_riverpod_settings.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `ProviderBase` is exported from the `misc` entrypoint in Riverpod 3.x.
+import 'package:flutter_riverpod/misc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 String _defaultMessage({
