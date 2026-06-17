@@ -3,6 +3,8 @@
 > Every ingredient Claude may select for a new app. One entry per ingredient.
 > Tiers: must-have · recommended · optional · avoid-unless-needed.
 > "Brick-provided" means the riverpod_simple_architecture brick already ships it.
+>
+> _Last reviewed: 2026-06. Package names and versions drift — verify each on pub.dev before relying on it. This brick has rotted from unpinned deps before; treat the recommendations as a snapshot, not a guarantee._
 
 ---
 
@@ -86,7 +88,7 @@
 - **When NOT to:** Non-sensitive preferences (theme choice, onboarding completion flag) do not need secure storage — use `shared_preferences` for those.
 - **Suggested package/service:** `flutter_secure_storage` 10 (brick-provided). No alternative needed — it is the Flutter standard.
 - **Setup notes:** The brick ships this. Android `minSdk` is set to 23 (`AndroidKeyStore` requires it). Use the storage service abstraction the brick provides rather than calling `FlutterSecureStorage` directly — it makes mocking in tests trivial. Clear all secure storage on logout.
-- **Common mistakes:** (1) Storing JWTs in `SharedPreferences` — use `flutter_secure_storage`. (2) Not clearing storage on logout, leaving stale tokens that can be replayed. (3) Forgetting that secure storage is not encrypted on Android below API 23, which is why the brick enforces `minSdk 23`.
+- **Common mistakes:** (1) Storing JWTs in `SharedPreferences` — use `flutter_secure_storage`. (2) Not clearing storage on logout, leaving stale tokens that can be replayed. (3) Forgetting that secure storage is not encrypted on Android below API 23, which is why the brick enforces `minSdk 23`. (4) **Trusting it on Flutter web** — on web it falls back to `localStorage`/IndexedDB and is **not** secure. If you ship a web target, do not store tokens client-side at all; use an httpOnly-cookie backend session instead.
 
 ---
 
@@ -114,6 +116,18 @@
 
 ---
 
+## localization
+**Classification:** recommended  ·  **Brick-provided:** yes (slang + ARB/JSON files; language selector in `SettingsPage`)
+
+- **Why it matters:** Most non-trivial apps eventually need more than one language, and for India-market apps multi-language support is table stakes, not a nice-to-have. Retrofitting i18n into an app full of hard-coded strings is one of the most tedious migrations there is — starting localized costs almost nothing because the brick already wires it.
+- **When to include:** Default-on for any consumer app; effectively mandatory for multi-language markets (India, EU). The marginal cost is just authoring strings instead of hard-coding them.
+- **When NOT to:** Throwaway prototypes or strictly single-locale internal tools — though even then, routing strings through slang keeps the door open for free.
+- **Suggested package/service:** `slang` + `slang_build_runner` (brick-provided — type-safe, codegen'd, no `BuildContext` needed for lookups). Alternative: Flutter's official `flutter_localizations` + ARB if you prefer the built-in path.
+- **Setup notes:** The brick ships slang with translation files and a generated accessor; the settings strings already live there. Add a locale to the slang config, run `dart run slang`, then translate. The language selector is already in `SettingsPage`. Keep keys semantic (`home.greeting`), not English-literal.
+- **Common mistakes:** (1) Hard-coding user-facing strings and "adding i18n later" — later never comes cheaply. (2) Concatenating translated fragments, which breaks word order in other languages — use parameterized strings and ICU plurals. (3) Localizing in-app text but forgetting store metadata, dates, and number/currency formatting.
+
+---
+
 ## authentication
 **Classification:** recommended  ·  **Brick-provided:** no
 
@@ -121,7 +135,7 @@
 - **When to include:** Any app with cloud sync, subscriptions, social features, or content personalization. Include it early — retrofitting auth into an app built around anonymous local state is painful.
 - **When NOT to:** Local-only utility apps with no cloud features, no subscriptions, and no user-specific data. Adding auth to a calculator or a unit converter creates friction with no benefit.
 - **Suggested package/service:** `firebase_auth` (default — integrates with Firestore, Crashlytics user ID, RevenueCat); alt `supabase_flutter` auth for Supabase backends; alt `appwrite` for self-hosted.
-- **Setup notes:** Use Firebase Auth with at minimum email/password + Google Sign-In. Set `FirebaseCrashlytics.instance.setUserIdentifier(uid)` after login so crash reports are linkable to users (UID only, not email). Store the auth token in `flutter_secure_storage` (brick-provided). Implement a proper logout that clears secure storage, Riverpod state, and Crashlytics user ID.
+- **Setup notes:** Use Firebase Auth with at minimum email/password + Google Sign-In. Set `FirebaseCrashlytics.instance.setUserIdentifier(uid)` after login so crash reports are linkable to users (UID only, not email). Store the auth token in `flutter_secure_storage` (brick-provided). Implement a proper logout that clears secure storage, Riverpod state, and Crashlytics user ID. If you offer account creation, you **must** also offer in-app account deletion (Apple Guideline 5.1.1(v) — a web link alone is rejected on iOS); see `release-checklist.md`.
 - **Common mistakes:** (1) Not handling token expiry — use Firebase Auth's `authStateChanges()` stream rather than caching the token manually. (2) Not clearing user state on sign-out, causing stale data bleed between accounts. (3) Gating all app value behind auth for apps where most features could be anonymous — leads to high drop-off at the auth wall.
 
 ---
@@ -276,7 +290,7 @@
 - **Why it matters:** AI features (text generation, summarization, image analysis, voice interaction) are increasingly a core product differentiator. Flutter apps can call LLM APIs directly from the client or via a server proxy for cost control and rate limiting.
 - **When to include:** Apps where AI is a core value proposition (writing assistant, code helper, smart search, personalized recommendations) or a meaningful productivity enhancer.
 - **When NOT to:** Apps where AI is a gimmick bolted onto an otherwise complete feature set. AI adds cost, latency, and complexity — only include it if it genuinely solves a user problem better than a non-AI approach.
-- **Suggested package/service:** `anthropic_sdk_dart` / `dart_anthropic` for Claude (server-proxy recommended); `dart_openai` for OpenAI; `google_generative_ai` for Gemini (direct client call supported). For on-device: `flutter_gemma` (Gemma 2B on-device).
+- **Suggested package/service:** `anthropic_sdk_dart` / `dart_anthropic` for Claude (server-proxy recommended); `dart_openai` for OpenAI; `google_generative_ai` for Gemini (client-direct is technically possible, but still proxy through your server in production — "supported" is not "safe"). For on-device: `flutter_gemma` (Gemma 2B on-device).
 - **Setup notes:** Never put LLM API keys in the Flutter app — proxy all calls through your server. Implement rate limiting and cost guards server-side (`rate-limiting` ingredient). Use streaming responses (`SSE`) for a better UX on longer outputs. Track token usage and cost per user. Add the `rate-limiting` ingredient whenever you add `ai-integration`.
 - **Common mistakes:** (1) Putting the API key in the Flutter app — it will be extracted and abused. (2) No loading/streaming indicator for LLM responses — users think the app froze. (3) No cost guard or per-user rate limit — a few heavy users can run up a large bill overnight.
 

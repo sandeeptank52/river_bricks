@@ -28,6 +28,7 @@ A concrete, actionable checklist organized by domain. Each item is a hard requir
 - [ ] `SharedPreferences` is used only for non-sensitive preferences (theme choice, onboarding completion flag, locale) — verify no sensitive values are written there.
 - [ ] App does not cache raw network responses containing PII to disk — if caching is needed, cache only non-sensitive fields or encrypt the cache.
 - [ ] Logout clears: `flutter_secure_storage` (all keys written by the app), in-memory Riverpod state, Hive boxes containing user-specific data, and Crashlytics user identifier (`FirebaseCrashlytics.instance.setUserIdentifier('')`).
+- [ ] `(if web target)` Do not rely on `flutter_secure_storage` on Flutter **web** — it falls back to `localStorage`/IndexedDB and is **not** secure (readable by any script, persisted in plaintext). On web, keep tokens out of the client entirely: use an httpOnly-cookie backend session. This is a silent footgun because the same API "works" on web without error.
 - [ ] Android backup is configured appropriately — by default, `auto-backup` sends `SharedPreferences` and file storage to Google Drive. Exclude `flutter_secure_storage` data from backup (it is already excluded by the Keystore), but review `android:allowBackup` in `AndroidManifest.xml`.
 
 ---

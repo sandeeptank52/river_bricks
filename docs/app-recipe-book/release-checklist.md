@@ -41,7 +41,7 @@ A pre-submission checklist for every production release. Work through these sect
 - [ ] `(if ads)` ATT prompt (`app_tracking_transparency`) is shown before AdMob initializes with personalized ads on iOS. `NSUserTrackingUsageDescription` key added to `Info.plist` with a clear, honest description.
 - [ ] `(if ads)` Google UMP consent form shown before personalized ads for GDPR/EEA users. UMP integration tested with a VPN to a European country.
 - [ ] `(if analytics with third-party tools)` Third-party analytics SDKs declared in App Store Privacy Labels and Play Data Safety.
-- [ ] `(if authentication)` Data deletion mechanism implemented and documented — either an in-app "Delete Account" option or a clearly linked web form. Required by most app stores for apps with user accounts.
+- [ ] `(if authentication)` In-app account deletion implemented. **Apple Guideline 5.1.1(v) makes this a hard rejection**: an app that supports account creation must let the user *initiate* deletion from within the app (a web link alone is not sufficient on iOS). Deletion must remove the Auth account + associated data (Firebase: delete the Firestore user document + `FirebaseAuth` account). Document it in the privacy policy.
 - [ ] `(if push-notifications)` `NSUserNotificationUsageDescription` added to `Info.plist` (iOS). Push Notifications entitlement enabled in Xcode Signing & Capabilities.
 - [ ] `(if camera / location / microphone)` All `NS*UsageDescription` keys added to `Info.plist` with honest, specific descriptions. System permission prompts are triggered only after in-context rationale is shown.
 

@@ -5,6 +5,8 @@ A planning system for new Flutter apps built from the
 ingredients via a decision matrix, and writes a base product plan — it does
 **NOT** build the app.
 
+> _Last reviewed: 2026-06. Package recommendations are a snapshot — verify versions on pub.dev before relying on them._
+
 ## How to use
 
 Run `/flutter-app-planner` (the committed Claude Code skill at
@@ -21,11 +23,14 @@ emit two files into your new project directory:
   brick-provided flag, and setup notes
 
 After the files are written, Claude stops. You read, adjust, and then build.
+See [example-plan.md](example-plan.md) for a complete worked example of both
+output files (a subscription AI app), so you know exactly what to expect.
 
 ## Contents
 
 - [production-foundation.md](production-foundation.md) — the "Solid default" baseline: 9 must-have ingredients every production app gets
-- [ingredient-catalog.md](ingredient-catalog.md) — all 29 ingredients, classified (must-have · recommended · optional · avoid-unless-needed) with the 6 documented fields each
+- [ingredient-catalog.md](ingredient-catalog.md) — all 30 ingredients, classified (must-have · recommended · optional · avoid-unless-needed) with the 6 documented fields each
+- [example-plan.md](example-plan.md) — a fully worked example output (base product plan + ingredient checklist) for a subscription AI app
 - [decision-matrix.md](decision-matrix.md) — the deterministic selection engine: app type + interview answers → ingredient set
 - [app-type-recipes.md](app-type-recipes.md) — the 4 concrete app-type recipes (Utility/tools, Content/feed, Productivity/notes, Subscription/SaaS/AI)
 - [backend-recipes.md](backend-recipes.md) — Firebase / Supabase / Custom REST / Local-only — pick per app

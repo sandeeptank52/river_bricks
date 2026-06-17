@@ -64,6 +64,7 @@ minus (conflict rule exclusions) is the final ingredient set.
 | Ad-supported free app? → yes | ads | Activates privacy-basics obligations: ATT (iOS) + UMP consent |
 | Admin / content management needed by non-developers? → yes | admin-panel-cms | Avoid unless Firebase Console / Retool cannot meet the need |
 | Push notifications (re-engagement, transactional)? → yes | push-notifications | Request permission at value moment, not on first launch |
+| Multiple languages / non-English market (e.g. India, EU)? → yes | localization | Brick-provided via slang — low cost; route strings through it from day one |
 
 > **Prerequisites not enforced automatically:**
 > - cloud-sync → requires authentication (add it if not already selected)

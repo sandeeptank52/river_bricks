@@ -125,7 +125,7 @@
     <h1>App Building <span class="grad">Recipe Book</span></h1>
     <p class="lede">A reusable planning layer for the <code>riverpod_simple_architecture</code> brick. Claude interviews you about a new app, selects the right ingredients via a deterministic decision matrix, and writes a tailored base product plan — <b>it never builds the app</b>.</p>
     <div class="pills">
-      <span class="pill"><b>29</b> classified ingredients</span>
+      <span class="pill"><b>30</b> classified ingredients</span>
       <span class="pill"><b>4</b> app-type recipes</span>
       <span class="pill"><b>9</b> must-have baseline</span>
       <span class="pill">Output: <b>plan only</b></span>
@@ -196,9 +196,9 @@
       <h2><span class="num">03</span>Ingredient catalog</h2>
       <p class="sub">All 29 ingredients, each classified into one tier. Filter by tier:</p>
       <div class="filters" id="filters">
-        <button class="fbtn" data-f="all" aria-pressed="true">all · 29</button>
+        <button class="fbtn" data-f="all" aria-pressed="true">all · 30</button>
         <button class="fbtn" data-f="must">must-have · 9</button>
-        <button class="fbtn" data-f="rec">recommended · 6</button>
+        <button class="fbtn" data-f="rec">recommended · 7</button>
         <button class="fbtn" data-f="opt">optional · 10</button>
         <button class="fbtn" data-f="avoid">avoid-unless-needed · 4</button>
       </div>
@@ -222,6 +222,7 @@
             <tr data-tier="rec"><td class="slug"><code>remote-config</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_remote_config</td><td>Change behaviour without a store release.</td></tr>
             <tr data-tier="rec"><td class="slug"><code>performance-monitoring</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_performance</td><td>See latency &amp; slow starts, not just crashes.</td></tr>
             <tr data-tier="rec"><td class="slug"><code>local-database</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">hive_ce</td><td>Offline access, fast reads, caching across restarts.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>localization</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">slang</td><td>Multi-language is table stakes for India/EU; retrofitting i18n later is painful.</td></tr>
             <tr data-tier="opt"><td class="slug"><code>payments-revenuecat</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">purchases_flutter</td><td>Stores mandate IAP for digital goods/subscriptions.</td></tr>
             <tr data-tier="opt"><td class="slug"><code>payments-cashfree</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">flutter_cashfree_pg_sdk + server</td><td>Compliant India gateway for real-world goods/services.</td></tr>
             <tr data-tier="opt"><td class="slug"><code>push-notifications</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_messaging</td><td>The primary mobile re-engagement channel.</td></tr>
@@ -354,6 +355,8 @@
           <li><b>Storage:</b> sensitive data in secure storage, not prefs</li>
           <li><b>Transport:</b> HTTPS only; cert pinning only if the threat model needs it</li>
           <li><b>Payments/PII:</b> never confirm payment on the client; minimise PII</li>
+          <li><b>Web:</b> <code>flutter_secure_storage</code> is <em>not</em> secure on web (localStorage) — keep tokens off the client</li>
+          <li><b>Account deletion:</b> in-app deletion is required when you offer accounts (Apple 5.1.1(v) — hard rejection)</li>
         </ul></div>
         <div class="card"><h4>Testing strategy</h4><ul>
           <li>Notifier unit tests via <code>testNotifier</code> (brick helper)</li>
@@ -396,6 +399,7 @@
         <li>Run <code>/flutter-app-planner</code> (committed skill) — or paste <code>claude-starter-prompt.md</code> into any chat.</li>
         <li>Answer the interview; the planner writes <code>base-product-plan.md</code> + <code>ingredient-checklist.md</code> into your new project.</li>
         <li>Build the app from the plan using the brick + the checked ingredients.</li>
+        <li>See <a href="example-plan.md">example-plan.md</a> for a complete worked output (a subscription AI app).</li>
       </ul>
       <h3>How to extend</h3>
       <ul class="clean">
@@ -409,7 +413,7 @@
 </div>
 
 <footer>
-  <div class="wrap">App Building Recipe Book · planning layer for the <code>riverpod_simple_architecture</code> Mason brick · plan-only, in-repo, deterministic.</div>
+  <div class="wrap">App Building Recipe Book · planning layer for the <code>riverpod_simple_architecture</code> Mason brick · plan-only, in-repo, deterministic. <br>Last reviewed 2026-06 — package recommendations are a snapshot; verify versions on pub.dev.</div>
 </footer>
 
 <script>
