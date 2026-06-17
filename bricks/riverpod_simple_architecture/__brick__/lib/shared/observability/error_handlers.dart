@@ -8,12 +8,12 @@ import 'package:{{project_name.snakeCase()}}/shared/observability/crash_reporter
 void wireCrashHandlers(CrashReporter reporter, Talker talker) {
   FlutterError.onError = (details) {
     talker.handle(details.exception, details.stack);
-    _safe(() => reporter.recordFlutterError(details), talker);
+    _safe(() => reporter.recordFlutterError(details), talker); // fire-and-forget; reporter failures handled inside _safe
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
     talker.handle(error, stack);
-    _safe(() => reporter.recordError(error, stack, fatal: true), talker);
+    _safe(() => reporter.recordError(error, stack, fatal: true), talker); // fire-and-forget; reporter failures handled inside _safe
     return true;
   };
 }
