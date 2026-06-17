@@ -52,20 +52,33 @@ void _patchAndroidIdentity(HookContext context) {
     }
   }
 
-  // android:label in AndroidManifest.xml.
+  // android:label in AndroidManifest.xml — scoped to the <application> tag only.
   if (title.isNotEmpty) {
     final f = File('android/app/src/main/AndroidManifest.xml');
-    if (f.existsSync()) {
+    if (!f.existsSync()) {
+      context.logger.detail(
+          'AndroidManifest.xml not found — skipping android:label patch');
+    } else {
       var src = f.readAsStringSync();
-      final patched = src.replaceAllMapped(
-        RegExp(r'android:label="[^"]*"'),
-        (_) => 'android:label="$title"',
+      // Match the entire <application ...> opening tag (from <application to the
+      // first >) and replace android:label only within that captured block.
+      final patched = src.replaceFirstMapped(
+        RegExp(r'<application\b[^>]*>', dotAll: true),
+        (m) {
+          final tag = m.group(0)!;
+          final updated = tag.replaceFirst(
+            RegExp(r'android:label="[^"]*"'),
+            'android:label="$title"',
+          );
+          return updated;
+        },
       );
       if (patched != src) {
         f.writeAsStringSync(patched);
-        context.logger.detail('Set android:label to "$title"');
+        context.logger.detail('Set android:label to "$title" in AndroidManifest.xml');
       } else {
-        context.logger.detail('android:label not found in AndroidManifest.xml');
+        context.logger.detail(
+            'android:label not found in <application> tag of AndroidManifest.xml');
       }
     }
   }
