@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:{{project_name.snakeCase()}}/core/local_storage/app_storage.dart';
 import 'package:{{project_name.snakeCase()}}/core/local_storage/app_storage_pod.dart';
 import 'package:{{project_name.snakeCase()}}/core/theme/theme_controller.dart';
-import 'package:riverpod_test/riverpod_test.dart';
+
+import '../../helpers/notifier_tester.dart';
 
 void main() {
   group('ThemeModeController Test', () {

@@ -25,6 +25,9 @@ void main() {
             equals(const Duration(seconds: 5)));
         addTearDown(container.dispose);
 
+        // Keep the autoDispose stream provider alive while we await its first
+        // value (Riverpod 3 disposes it eagerly without an active listener).
+        container.listen(internetCheckerNotifierPod, (_, _) {});
         final status = await container.read(internetCheckerNotifierPod.future);
         expect(status, InternetStatus.connected);
       },
@@ -50,6 +53,9 @@ void main() {
 
         addTearDown(container.dispose);
 
+        // Keep the autoDispose stream provider alive while we await its first
+        // value (Riverpod 3 disposes it eagerly without an active listener).
+        container.listen(internetCheckerNotifierPod, (_, _) {});
         final status = await container.read(internetCheckerNotifierPod.future);
         expect(status, InternetStatus.connected);
       },
@@ -78,6 +84,7 @@ void main() {
         );
         addTearDown(container.dispose);
 
+        container.listen(internetCheckerNotifierPod, (_, _) {});
         var status = await container.read(internetCheckerNotifierPod.future);
         expectLater(
           status,

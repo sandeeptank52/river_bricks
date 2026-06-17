@@ -1,3 +1,22 @@
+# 3.0.0
+
+**Modernization release — brings the template to current best practices and latest stable dependencies. Contains breaking changes.**
+
+### Breaking
+- ⬆️ **Migrated to Riverpod 3.** `AutoDisposeNotifier`/`AutoDisposeStreamNotifier` replaced with the unified `Notifier`/`StreamNotifier`; `StateProvider` now imported from `package:flutter_riverpod/legacy.dart`; `ProviderObserver` updated to the new `ProviderObserverContext` signature; `Ref<T>` → `Ref`.
+- ⬆️ **auto_route 11**, **flex_color_scheme 8**, and other majors are now the pinned baseline.
+- 🧹 **Removed `velocity_x`** (UI extensions replaced with vanilla Flutter widgets).
+- 🔁 **Replaced `flutter_secure_storage_x` with the official `flutter_secure_storage` (10.x)** and the **`responsive_framework` git fork with the pub.dev release (1.5.1)**. Android now requires **minSdk 23**.
+- 🧪 **Dropped `riverpod_test`** (no Riverpod 3 release); notifier/provider tests now use a small built-in `testNotifier` helper and plain `ProviderContainer`.
+
+### Changed / Fixed
+- 📌 **All dependencies are now pinned in `pubspec.yaml`** instead of being added unpinned by the post-generation hook — generation is reproducible and the code always matches its dependencies.
+- 🪝 **Reworked the post-generation hook:** resolves packages, deletes stale generated files, runs `dart run slang` for localization and `dart run build_runner build` for routes, and is non-interactive (CI-friendly).
+- 🛡️ **Security:** the "trust all TLS certificates" helper is now gated behind `kDebugMode` so it can never weaken certificate validation in production builds.
+- 🔧 Fixed deprecated Flutter APIs (`MediaQuery.textScaleFactor`, `Color.withOpacity`).
+- 🧹 Removed unused dependencies (`dio_smart_retry`, `path_provider`).
+- 📝 Refreshed README (requirements, platform minimums) and lint config.
+
 # 2.1.5
 - Fixed dependency erro of velocityx for intl.
 

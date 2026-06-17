@@ -15,8 +15,7 @@ import 'package:{{project_name.snakeCase()}}/shared/widget/no_internet_widget.da
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
 import '../../helpers/pump_app.dart';
 
-class TestInternetStatusNotifier
-    extends AutoDisposeStreamNotifier<InternetStatus>
+class TestInternetStatusNotifier extends StreamNotifier<InternetStatus>
     implements InternetStatusNotifier {
   final Stream<InternetStatus> Function() streamBuild;
 

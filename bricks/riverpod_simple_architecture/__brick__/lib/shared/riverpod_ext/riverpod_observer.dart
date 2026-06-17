@@ -2,48 +2,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 // coverage:ignore-file
-class MyObserverLogger<T> extends ProviderObserver {
-  MyObserverLogger({required this.talker}) : super();
+/// Optional alternative to [TalkerRiverpodObserver] that logs provider
+/// updates through [Talker].
+///
+/// Riverpod 3 unified the observer callbacks behind a
+/// [ProviderObserverContext] and made [ProviderObserver] a `base` class, so
+/// subclasses must also be marked `base`. Wire this up via the `observers`
+/// of your [ProviderContainer]/[ProviderScope] if you prefer this output over
+/// the default talker observer.
+base class MyObserverLogger extends ProviderObserver {
+  MyObserverLogger({required this.talker});
   final Talker talker;
 
   @override
   void didUpdateProvider(
-    ProviderBase<Object?> provider,
+    ProviderObserverContext context,
     Object? previousValue,
     Object? newValue,
-    ProviderContainer container,
   ) {
+    final provider = context.provider;
     final name = provider.name != null
         ? '${provider.name} of Type `${provider.runtimeType}`'
-        : {provider.runtimeType};
-    if (newValue is StateController) {
-      final newv = newValue.state;
-      final perviousv = (previousValue as StateController?)?.state;
-      talker.log('Provider is: '
-          '$name \n'
-          'previous value: $perviousv \n'
-          'new value: $newv');
-    } else if ((newValue is AsyncValue?) && (previousValue is AsyncValue?)) {
-      final previousAsyncValue = previousValue;
-      if (previousAsyncValue != null) {
-        final newv = newValue?.valueOrNull;
-        final previousv = previousAsyncValue.valueOrNull;
-        talker.log('Provider is: '
-            '$name \n'
-            'previous value: $previousv \n'
-            'new value: $newv');
-      } else {
-        talker.log('Provider is: '
-            '$name \n'
-            'previous value: null \n'
-            'new value: ${newValue?.valueOrNull}');
-      }
+        : '${provider.runtimeType}';
+
+    if (newValue is AsyncValue && previousValue is AsyncValue?) {
+      talker.log('Provider is: $name \n'
+          'previous value: ${previousValue?.value} \n'
+          'new value: ${newValue.value}');
     } else {
-      talker.log('Provider is: '
-          '$name \n'
+      talker.log('Provider is: $name \n'
           'previous value: $previousValue\n'
           'new value: $newValue');
     }
-    super.didUpdateProvider(provider, previousValue, newValue, container);
   }
 }

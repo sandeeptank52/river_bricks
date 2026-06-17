@@ -402,8 +402,9 @@ Our architecture is structured around distinct layers, each with well-defined re
     *   **Widget Tests:** UI components.
     *   **Integration Tests:** Multiple units or layers.
 *   **Tools:**
-    *   `riverpod_test`: Testing Riverpod providers.
-    *   `mockito`: Mocking dependencies.
+    *   `ProviderContainer` + the bundled `testNotifier` helper (`test/helpers/notifier_tester.dart`): Testing Riverpod providers/notifiers.
+    *   `mocktail`: Mocking dependencies.
+    *   `spot`: Widget selection/testing.
 *   **Mocking:** Mock dependencies to isolate the code under test.
 * **Example**
     ```dart

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:{{project_name.snakeCase()}}/features/counter/counter.dart';
-import 'package:riverpod_test/riverpod_test.dart';
+
+import '../../../helpers/notifier_tester.dart';
 
 abstract class MyAbstract {}
 

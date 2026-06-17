@@ -3,4 +3,4 @@
 # To learn more, visit https://docs.brickhub.dev.
 bricks:
   riverpod_simple_architecture:
-    path: "bricks\\riverpod_simple_architecture"
+    path: "bricks/riverpod_simple_architecture"

@@ -5,8 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 
-///This function used for those devices which doesnot support
-/// newer ssl certificate and disabled in web
+/// Disables TLS certificate validation for the given [dio] instance (disabled
+/// on web).
+///
+/// ⚠️ SECURITY WARNING: this trusts *every* certificate and must only be used
+/// in debug builds (it is gated behind `kDebugMode` at the call site). Never
+/// enable it in production — it makes the app vulnerable to man-in-the-middle
+/// attacks.
 void fixBadCertificate({required Dio dio}) {
   if (!kIsWeb) {
     dio.httpClientAdapter = IOHttpClientAdapter(

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 /// This one is extension `when` extension on AsyncValue
 /// with some default loading,error widget and
@@ -93,42 +92,93 @@ class DefaultErrorWidget extends StatelessWidget {
                   includedefaultDioErrorMessage: includedefaultDioErrorMessage,
                 ),
                 if (onRetry != null)
-                  ElevatedButton(
-                    onPressed: onRetry,
-                    child: const Text('Try again '),
-                  ).flexible()
+                  Flexible(
+                    child: ElevatedButton(
+                      onPressed: onRetry,
+                      child: const Text('Try again '),
+                    ),
+                  )
                 else
-                  const Text('Try Again later.').p8().flexible(),
+                  const Flexible(
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Text('Try Again later.'),
+                    ),
+                  ),
               ],
             )
           : Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.close,
-                  color: Colors.red,
-                ).circle(radius: 32).flexible(),
-                'Something went wrong! '
-                    .text
-                    .bold
-                    .lg
-                    .red500
-                    .make()
-                    .p8()
-                    .flexible(),
+                Flexible(
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0x1FF44336),
+                    ),
+                    child: const Icon(Icons.close, color: Colors.red),
+                  ),
+                ),
+                const Flexible(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      'Something went wrong! ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFFEF5350),
+                      ),
+                    ),
+                  ),
+                ),
                 ErrorTextWidget(
                   error: error,
                   includedefaultDioErrorMessage: includedefaultDioErrorMessage,
                 ),
                 if (onRetry != null)
-                  ElevatedButton(
-                    onPressed: onRetry,
-                    child: const Text('Try again '),
-                  ).flexible()
+                  Flexible(
+                    child: ElevatedButton(
+                      onPressed: onRetry,
+                      child: const Text('Try again '),
+                    ),
+                  )
                 else
-                  const Text('Try Again later.').p8().flexible(),
+                  const Flexible(
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Text('Try Again later.'),
+                    ),
+                  ),
               ],
             ),
+    );
+  }
+}
+
+/// Shared styled, padded, flexible error message used by the default
+/// error widgets below (replaces the previous velocity_x text helpers).
+class _ErrorMessage extends StatelessWidget {
+  const _ErrorMessage(this.message, {this.padding = 8});
+  final String message;
+  final double padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Padding(
+        padding: EdgeInsets.all(padding),
+        child: Text(
+          message,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -150,7 +200,7 @@ class ErrorTextWidget extends StatelessWidget {
         dioError: error as DioException,
       );
     }
-    return error.toString().text.bold.sm.make().p4().flexible();
+    return _ErrorMessage(error.toString(), padding: 4);
   }
 }
 
@@ -166,60 +216,36 @@ class DefaultDioErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (dioError.type) {
       case DioExceptionType.connectionTimeout:
-        return 'Connection Timeout Error'.text.bold.sm.make().p4().flexible();
+        return const _ErrorMessage('Connection Timeout Error', padding: 4);
 
       case DioExceptionType.sendTimeout:
-        return 'Unable to connect to the server.Please try again later.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Unable to connect to the server.Please try again later.',
+        );
 
       case DioExceptionType.receiveTimeout:
-        return 'Check you internet connection reliability.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Check you internet connection reliability.',
+        );
       case DioExceptionType.badCertificate:
-        return 'Please update your OS or add certificate.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Please update your OS or add certificate.',
+        );
 
       case DioExceptionType.badResponse:
-        return 'Something went wrong.Please try again later.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Something went wrong.Please try again later.',
+        );
       case DioExceptionType.cancel:
-        return 'Request Cancelled'.text.bold.sm.make().p4().flexible();
+        return const _ErrorMessage('Request Cancelled', padding: 4);
       case DioExceptionType.connectionError:
-        return 'Unable to connect to server.Please try again later.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Unable to connect to server.Please try again later.',
+        );
       case DioExceptionType.unknown:
-        return 'Please check your internet connection.'
-            .text
-            .bold
-            .sm
-            .make()
-            .p8()
-            .flexible();
+        return const _ErrorMessage(
+          'Please check your internet connection.',
+        );
     }
   }
 }
