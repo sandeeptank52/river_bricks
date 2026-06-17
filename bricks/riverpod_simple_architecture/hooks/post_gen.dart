@@ -139,6 +139,7 @@ void run(HookContext context) async {
 
   _patchAndroidIdentity(context);
 
+  final responsiveNote = responsive ? ', responsive_framework' : '';
   context.logger.info(
     '''\n\n 🎉 Your Riverpod simple-architecture app is ready!
       \n 🔄 State management: Riverpod 3 (with cache/refresh/debounce/cancel + easyWhen extensions)
@@ -147,7 +148,7 @@ void run(HookContext context) async {
       \n 🎨 Theming: flex_color_scheme (light/dark with persistence)
       \n 🗄️  Storage: Hive CE with an encrypted box (key in flutter_secure_storage)
       \n 🌍 Localization: slang (l10n/i18n)
-      \n 🚫 Built-in no-internet + locale-picker widgets, responsive_framework, and talker logging
+      \n 🚫 Built-in no-internet + locale-picker widgets$responsiveNote, and talker logging
       \n\n 💡 Android note: flutter_secure_storage requires minSdk 23.
       \n 💡 To enable Riverpod lints later, re-add custom_lint + riverpod_lint once the
       \n    analyzer ecosystem realigns, then uncomment the plugin in analysis_options.yaml.
