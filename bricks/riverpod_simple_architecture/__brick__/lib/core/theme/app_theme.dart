@@ -1,12 +1,16 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 
 ///This class defines light theme and dark theme
 ///Here we used flex color scheme
 class Themes {
   static ThemeData get theme => FlexThemeData.light(
-        scheme: FlexScheme.brandBlue,
+        colors: FlexSchemeColor.from(
+          primary: AppConfig.seedColor,
+          brightness: Brightness.light,
+        ),
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 20,
         appBarOpacity: 0.95,
@@ -37,7 +41,10 @@ class Themes {
         ///
       );
   static ThemeData get darkTheme => FlexThemeData.dark(
-        scheme: FlexScheme.brandBlue,
+        colors: FlexSchemeColor.from(
+          primary: AppConfig.seedColor,
+          brightness: Brightness.dark,
+        ),
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 15,
         appBarStyle: FlexAppBarStyle.background,
