@@ -1,12 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:platform_info/platform_info.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:{{project_name.snakeCase()}}/shared/observability/crash_reporter_pod.dart';
+import 'package:{{project_name.snakeCase()}}/shared/observability/error_handlers.dart';
 
 // coverage:ignore-file
 
@@ -36,9 +37,7 @@ Future<void> bootstrap(
   FutureOr<Widget> Function() builder, {
   required ProviderContainer parent,
 }) async {
-  FlutterError.onError = (details) {
-    log(details.exceptionAsString(), stackTrace: details.stack);
-  };
+  wireCrashHandlers(parent.read(crashReporterPod), talker);
 
   runApp(
     UncontrolledProviderScope(

@@ -17,6 +17,7 @@ final futureInitializerPod = FutureProvider.autoDispose<ProviderContainer>((
   ///Additional intial delay duration for app
   // await Future.delayed(const Duration(seconds: 1));
   await (init());
+  // FIREBASE_INIT (do not remove — setup_firebase.sh inserts Firebase.initializeApp here)
   await Hive.initFlutter();
 
   ///Replace `appBox` namw with any key you want
