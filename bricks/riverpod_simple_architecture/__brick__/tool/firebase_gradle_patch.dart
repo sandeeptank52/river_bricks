@@ -15,6 +15,8 @@ String addFirebasePlugins(String content, {required bool isSettings}) {
           'id("com.google.firebase.crashlytics")',
         ];
 
+  // Each plugin is prepended individually, so the emitted order in the file is
+  // the reverse of the list above (last item in the list ends up first).
   var result = content;
   for (final line in lines) {
     final id = RegExp(r'id\("([^"]+)"\)').firstMatch(line)!.group(1)!;
