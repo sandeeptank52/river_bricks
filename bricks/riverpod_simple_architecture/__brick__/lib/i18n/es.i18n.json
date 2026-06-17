@@ -1,7 +1,16 @@
 {
-    "locale": "es",
-     "locale_en": "English",
-     "locale_es": "Spanish",
-    "counterAppBarTitle": "Contador"
-
+  "locale": "es",
+  "locale_en": "English",
+  "locale_es": "Spanish",
+  "counterAppBarTitle": "Contador",
+  "settings": {
+    "title": "Ajustes",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "about": "Acerca de",
+    "version": "Versión",
+    "contactSupport": "Contactar soporte",
+    "privacyPolicy": "Política de privacidad",
+    "launchError": "No se pudo abrir. Inténtalo de nuevo."
+  }
 }

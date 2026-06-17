@@ -2,6 +2,15 @@
   "locale": "en",
   "locale_en": "English",
   "locale_es": "Spanish",
-  "counterAppBarTitle": "Counter"
-
+  "counterAppBarTitle": "Counter",
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "about": "About",
+    "version": "Version",
+    "contactSupport": "Contact support",
+    "privacyPolicy": "Privacy policy",
+    "launchError": "Could not open. Please try again."
+  }
 }
