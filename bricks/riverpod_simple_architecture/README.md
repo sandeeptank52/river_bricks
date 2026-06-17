@@ -93,11 +93,32 @@ mason upgrade --global
 
 ## Variables ✨
 
-| Variable         | Description                           | Default        | Type      |
-| ---------------- | ------------------------------------- | -------------- | --------- |
-| `project_name`   | Name of current project               |  | `string`  |
+| Variable          | Description                                  | Default       | Type    |
+| ----------------- | -------------------------------------------- | ------------- | ------- |
+| `project_name`    | Project / package name                       | *(prompted)*  | string  |
+| `app_title`       | Display title (launcher + in-app)            | derived       | string  |
+| `seed_color`      | Brand seed color, **6-hex without `#`**      | `3F51B5`      | string  |
+| `org`             | Reverse-domain org (→ `applicationId`)       | `com.example` | string  |
+| `app_description` | Short description (pubspec + About)          | `""`          | string  |
+| `author`          | Author / publisher                           | `""`          | string  |
+| `support_email`   | Support email (About)                        | `""`          | string  |
+| `privacy_url`     | Privacy policy URL (About)                   | `""`          | string  |
+| `responsive`      | Include `responsive_framework`               | `false`       | boolean |
 
+### Example
 
+```sh
+mason make riverpod_simple_architecture \
+  --project_name unit_converter \
+  --app_title "Unit Converter" \
+  --seed_color 3F51B5 \
+  --org dev.shreeman \
+  --responsive false
+```
+
+App identity is centralised in `lib/const/app_config.dart` (`AppConfig`). The theme is
+derived from `seed_color`. With `--responsive true`, `responsive_framework` and its
+wrapper are included; otherwise they are omitted.
 
 ### Make using (with prompt)
 
