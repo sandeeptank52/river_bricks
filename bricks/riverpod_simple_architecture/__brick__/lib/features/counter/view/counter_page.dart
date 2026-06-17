@@ -6,6 +6,7 @@ import 'package:{{project_name.snakeCase()}}/features/counter/controller/counter
 import 'package:{{project_name.snakeCase()}}/features/theme_segmented_btn/view/theme_segmented_btn.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/app_locale_popup.dart';
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
+import 'package:{{project_name.snakeCase()}}/shared/widget/settings_button.dart';
 
 @RoutePage(deferredLoading: true)
 class CounterPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class CounterView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const CounterAppBarTitle(),
-        actions: const [AppLocalePopUp()],
+        actions: const [AppLocalePopUp(), SettingsButton()],
       ),
       body: const Center(
         child: Column(
