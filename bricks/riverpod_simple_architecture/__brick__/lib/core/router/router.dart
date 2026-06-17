@@ -11,5 +11,9 @@ class AppRouter extends RootStackRouter {
       path: '/',
       initial: true,
     ),
+    AutoRoute(
+      page: SettingsRoute.page,
+      path: '/settings',
+    ),
   ];
 }
