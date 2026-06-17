@@ -26,6 +26,51 @@ Future<bool> _run(
   }
 }
 
+void _patchAndroidIdentity(HookContext context) {
+  final org = (context.vars['org'] as String?)?.trim() ?? '';
+  final name = (context.vars['project_name'] as String?)?.trim() ?? '';
+  final title = (context.vars['app_title'] as String?)?.trim() ?? '';
+  final snake = name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9_]'), '_');
+
+  // applicationId in build.gradle(.kts), only when org is non-default.
+  if (org.isNotEmpty && org != 'com.example' && snake.isNotEmpty) {
+    final appId = '$org.$snake';
+    for (final p in ['android/app/build.gradle.kts', 'android/app/build.gradle']) {
+      final f = File(p);
+      if (!f.existsSync()) continue;
+      var src = f.readAsStringSync();
+      final patched = src.replaceAllMapped(
+        RegExp(r'''applicationId\s*=?\s*["'][^"']*["']'''),
+        (_) => 'applicationId = "$appId"',
+      );
+      if (patched != src) {
+        f.writeAsStringSync(patched);
+        context.logger.detail('Set applicationId to $appId in $p');
+      } else {
+        context.logger.detail('applicationId pattern not found in $p');
+      }
+    }
+  }
+
+  // android:label in AndroidManifest.xml.
+  if (title.isNotEmpty) {
+    final f = File('android/app/src/main/AndroidManifest.xml');
+    if (f.existsSync()) {
+      var src = f.readAsStringSync();
+      final patched = src.replaceAllMapped(
+        RegExp(r'android:label="[^"]*"'),
+        (_) => 'android:label="$title"',
+      );
+      if (patched != src) {
+        f.writeAsStringSync(patched);
+        context.logger.detail('Set android:label to "$title"');
+      } else {
+        context.logger.detail('android:label not found in AndroidManifest.xml');
+      }
+    }
+  }
+}
+
 void run(HookContext context) async {
   context.logger.info('Post generation started');
 
@@ -78,6 +123,8 @@ void run(HookContext context) async {
   // Tests + coverage are informational; a failure here should not abort
   // generation of an otherwise-valid project.
   await _run(context, 'Running tests', 'flutter', ['test', '--coverage']);
+
+  _patchAndroidIdentity(context);
 
   context.logger.info(
     '''\n\n 🎉 Your Riverpod simple-architecture app is ready!
