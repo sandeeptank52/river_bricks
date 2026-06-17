@@ -84,7 +84,7 @@ the union of must-haves + base bundle + signal rows.
 | Digital goods / subscriptions selected | Use **payments-revenuecat** (store IAP). **Do NOT include payments-cashfree** — using a third-party payment gateway for digital content violates App Store and Google Play policies and risks removal. |
 | Local-only backend selected (no server, no sync) | **Drop cloud-sync** from the ingredient set. Keep offline-support and local-database — they function without a backend. Also drop authentication unless the app has a reason to auth against a local identity provider. |
 | ads selected | Must explicitly implement the ATT prompt (iOS 14.5+) and Google UMP consent flow — these are not automatic even though privacy-basics is in the must-have set. |
-| ai-integration selected | **Always also include rate-limiting** — AI API costs can spike to hundreds of dollars from a handful of users. This is a hard pairing, not optional. |
+| ai-integration selected | **Always also include rate-limiting** — AI API costs can spike to hundreds of dollars from a handful of users. This is a hard pairing, not optional. (`rate-limiting` is tiered `avoid-unless-needed` in the catalog — that means "don't add it gratuitously," and AI is precisely the case where it *is* needed.) |
 | referral-system selected | **Always also include deep-links** — referral attribution requires universal/app links to survive a fresh install. |
 
 ---
