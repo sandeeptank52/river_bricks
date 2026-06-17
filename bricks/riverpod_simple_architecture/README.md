@@ -64,7 +64,7 @@ errors are still logged via talker. To send crashes to Firebase Crashlytics:
 
 ```sh
 dart pub global activate flutterfire_cli   # one-time
-./tool/setup_firebase.sh                    # run in your generated app
+bash tool/setup_firebase.sh                 # run in your generated app
 ```
 
 The script runs `flutterfire configure` (the one interactive step — log in and pick/create a
