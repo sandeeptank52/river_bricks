@@ -24,8 +24,49 @@ environment:
 #  * an optional list of default values (array only)
 #  * an optional prompt phrase used when asking for the variable
 #  * a list of values (enums only)
-# vars:
-#   project_name:
-#     type: string
-#     description: Your project name
-#     prompt: What is your project name?
+vars:
+  project_name:
+    type: string
+    description: Project / package name
+    default: ""
+    prompt: Project name?
+  app_title:
+    type: string
+    description: App display title (blank = derived from project name)
+    default: ""
+    prompt: App display title?
+  seed_color:
+    type: string
+    description: Brand seed color, 6-hex without '#'
+    default: "3F51B5"
+    prompt: Brand seed color (6-hex, no #)?
+  org:
+    type: string
+    description: Organization in reverse-domain form
+    default: "com.example"
+    prompt: Organization (reverse-domain)?
+  app_description:
+    type: string
+    description: Short app description
+    default: ""
+    prompt: App description?
+  author:
+    type: string
+    description: Author / publisher name
+    default: ""
+    prompt: Author name?
+  support_email:
+    type: string
+    description: Support email
+    default: ""
+    prompt: Support email?
+  privacy_url:
+    type: string
+    description: Privacy policy URL
+    default: ""
+    prompt: Privacy policy URL?
+  responsive:
+    type: boolean
+    description: Include responsive_framework
+    default: false
+    prompt: Include responsive_framework?
