@@ -12,6 +12,7 @@ import 'package:{{project_name.snakeCase()}}/shared/helper/global_helper.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/no_internet_widget.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 
 ///This class holds Material App or Cupertino App
 ///with routing,theming and locale setup .
@@ -32,7 +33,7 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       //TODO: change app name
-      title: 'example App',
+      title: AppConfig.appTitle,
       theme: Themes.theme,
       darkTheme: Themes.darkTheme,
       themeMode: currentTheme,
