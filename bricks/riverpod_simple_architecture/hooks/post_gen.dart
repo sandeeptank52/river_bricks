@@ -29,6 +29,20 @@ Future<bool> _run(
 void run(HookContext context) async {
   context.logger.info('Post generation started');
 
+  // When responsive=false, the brick still copies responsive_wrapper.dart
+  // (macOS APFS does not allow '/' in filenames, so the Mason conditional-
+  // filename trick cannot be used on macOS). Delete the file here instead.
+  final responsive = context.vars['responsive'] as bool? ?? false;
+  if (!responsive) {
+    final wrapperFile =
+        File('lib/shared/widget/responsive_wrapper.dart');
+    if (wrapperFile.existsSync()) {
+      wrapperFile.deleteSync();
+      context.logger
+          .info('Removed responsive_wrapper.dart (responsive=false)');
+    }
+  }
+
   // Dependencies are now pinned in pubspec.yaml, so we only need to resolve
   // them — no `dart pub add` step is required anymore.
   if (!await _run(context, 'Getting packages', 'flutter', ['pub', 'get'])) {

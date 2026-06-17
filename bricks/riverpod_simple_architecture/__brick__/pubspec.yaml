@@ -41,7 +41,8 @@ dependencies:
   # UI / UX helpers
   flash: ^3.1.1
   flutter_displaymode: ^0.7.0
-  responsive_framework: ^1.5.1
+{{#responsive}}  responsive_framework: ^1.5.1
+{{/responsive}}
 
   # Utilities
   duration: ^4.0.3

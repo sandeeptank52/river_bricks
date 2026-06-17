@@ -10,7 +10,8 @@ import 'package:{{project_name.snakeCase()}}/core/theme/theme_controller.dart';
 import 'package:{{project_name.snakeCase()}}/i18n/strings.g.dart';
 import 'package:{{project_name.snakeCase()}}/shared/helper/global_helper.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/no_internet_widget.dart';
-import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
+{{#responsive}}import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
+{{/responsive}}
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
 import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 
@@ -50,12 +51,17 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
         if (mounted) {
           ///Used for responsive design
           ///Here you can define breakpoint and how the responsive should work
+{{#responsive}}
           child = ResponsiveBreakPointWrapper(
             firstFrameWidget: Container(
               color: Colors.white,
             ),
             child: child!,
           );
+{{/responsive}}
+{{^responsive}}
+          child = child!;
+{{/responsive}}
 
           /// Add support for maximum text scale according to changes in
           /// accessibilty in sytem settings
