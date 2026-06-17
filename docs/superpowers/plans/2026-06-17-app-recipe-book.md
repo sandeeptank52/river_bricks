@@ -74,7 +74,7 @@ Created under `.claude/skills/`:
 
 - [ ] **Step 1: Define the acceptance check**
 
-Each of the 25 ingredient slugs from "Canonical ingredient classification" must appear as a level-2 heading `## <slug>` and carry a `**Classification:** <tier>` line plus the six required field labels.
+Each of the 29 ingredient slugs from "Canonical ingredient classification" must appear as a level-2 heading `## <slug>` and carry a `**Classification:** <tier>` line plus the six required field labels.
 
 - [ ] **Step 2: Write the doc**
 
