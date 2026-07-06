@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:{{project_name.snakeCase()}}/core/local_storage/storage_keys.dart';
 
 /// This class used for storing data in nosql hive boxes
 /// ,reading data and deleting data .
@@ -11,7 +12,7 @@ class AppStorage {
   Future<void> init({bool isTest = false}) async {
     appBox = appBox ??
         await Hive.openBox(
-          'appBox',
+          StorageKeys.appBox,
           bytes: isTest ? Uint8List(0) : null,
         );
   }

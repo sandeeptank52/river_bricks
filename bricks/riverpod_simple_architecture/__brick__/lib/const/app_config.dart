@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
-
 /// Centralised, generated app identity/branding.
 ///
-/// Every later module (Settings, About, analytics consent, paywall) reads
-/// app identity from here instead of hard-coding literals.
+/// Compile-time constants only; environment-dependent values (URLs, support
+/// contacts, endpoints) live in [AppEnv] (`app_env.dart`), and brand colors
+/// live in `core/theme/brand_palette.dart`.
 class AppConfig {
   const AppConfig._();
 
   static const String appTitle = '{{app_title}}';
-  static const Color seedColor = Color(0xFF{{seed_color}});
   static const String description = '{{app_description}}';
   static const String author = '{{author}}';
-  static const String supportEmail = '{{support_email}}';
-  static const String privacyUrl = '{{privacy_url}}';
 }

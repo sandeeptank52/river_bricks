@@ -8,7 +8,7 @@ repository: https://github.com/sandeeptank52/river_bricks.git
 # The following defines the version and build number for your brick.
 # A version number is three numbers separated by dots, like 1.2.34
 # followed by an optional build number (separated by a +).
-version: 3.0.0
+version: 3.1.0
 
 # The following defines the environment for the current brick.
 # It includes the version of mason that the brick requires.
@@ -18,12 +18,17 @@ environment:
 # Variables specify dynamic values that your brick depends on.
 # Zero or more variables can be specified for a given brick.
 # Each variable has:
-#  * a type (string, number, boolean, enum, or array)
+#  * a type (string, number, boolean, enum, array, or list)
 #  * an optional short description
 #  * an optional default value
 #  * an optional list of default values (array only)
 #  * an optional prompt phrase used when asking for the variable
 #  * a list of values (enums only)
+#
+# NOTE ON FLAVORS: the three build flavors {development, staging, production}
+# are a fixed convention of this brick (AppFlavor enum, main_<flavor>.dart,
+# per-flavor AppEnv). They are NOT a variable — only their per-flavor
+# api_base_url values vary.
 vars:
   project_name:
     type: string
@@ -57,14 +62,68 @@ vars:
     prompt: Author name?
   support_email:
     type: string
-    description: Support email
+    description: Support email (per-flavor AppEnv value)
     default: ""
     prompt: Support email?
   privacy_url:
     type: string
-    description: Privacy policy URL
+    description: Privacy policy URL (per-flavor AppEnv value)
     default: ""
     prompt: Privacy policy URL?
+  terms_url:
+    type: string
+    description: Terms of service URL (per-flavor AppEnv value)
+    default: ""
+    prompt: Terms of service URL?
+  refund_url:
+    type: string
+    description: Refund policy URL (per-flavor AppEnv value)
+    default: ""
+    prompt: Refund policy URL?
+  api_base_url_development:
+    type: string
+    description: API base URL for the development flavor (empty = dioProvider fails fast until the backend is wired)
+    default: ""
+    prompt: Development API base URL?
+  api_base_url_staging:
+    type: string
+    description: API base URL for the staging flavor (empty = dioProvider fails fast until the backend is wired)
+    default: ""
+    prompt: Staging API base URL?
+  api_base_url_production:
+    type: string
+    description: API base URL for the production flavor (empty = dioProvider fails fast until the backend is wired)
+    default: ""
+    prompt: Production API base URL?
+  backend:
+    type: enum
+    description: Resolved backend identity (drives .gitignore/analyzer excludes and setup tooling expectations)
+    default: none
+    prompt: Backend?
+    values:
+      - firebase
+      - supabase
+      - none
+  languages:
+    type: list
+    description: Locale codes, first entry is the slang base locale ('en' is always included and always base)
+    default: [en]
+    prompt: Languages?
+  features:
+    type: list
+    description: 'Feature skeletons to scaffold. Entries: "name" or {"name": "auth", "data": true}. Content stays agent-owned.'
+    default: []
+    prompt: Features?
+  routes:
+    type: list
+    description: 'App route table. Entries: {"name", "path", "requires_onboarding", "requires_auth", "initial"}. Splash (initial), /settings and the * NotFound route are brick-owned and added automatically.'
+    default: []
+    prompt: Routes?
+  providers:
+    type: list
+    description: Selected provider ids from the resolved stack (drive the .env.example provider blocks)
+    default: []
+    prompt: Providers?
   responsive:
     type: boolean
     description: Include responsive_framework

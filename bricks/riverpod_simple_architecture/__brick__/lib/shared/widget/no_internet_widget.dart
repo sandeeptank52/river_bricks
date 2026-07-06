@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_colors_ext.dart';
 import 'package:{{project_name.snakeCase()}}/shared/api_client/dio/dio_client_provider.dart';
 import 'package:{{project_name.snakeCase()}}/shared/pods/internet_checker_pod.dart';
 
@@ -102,10 +103,10 @@ class _DefaultNoInternetState extends ConsumerState<DefaultNoInternetWidget> {
               ? SafeArea(
                   child: ((widget.noInternetWidget) ??
                       MaterialBanner(
-                        content: const Text(
+                        content: Text(
                           'No Internet Available',
                           style: TextStyle(
-                            color: Colors.red,
+                            color: context.appColors.error,
                           ),
                         ),
                         actions: [
@@ -129,8 +130,8 @@ class _DefaultNoInternetState extends ConsumerState<DefaultNoInternetWidget> {
           Expanded(
             child: Text(
               "$error",
-              style: const TextStyle(
-                color: Colors.red,
+              style: TextStyle(
+                color: context.appColors.error,
               ),
             ),
           ),
@@ -139,10 +140,10 @@ class _DefaultNoInternetState extends ConsumerState<DefaultNoInternetWidget> {
                 onPressed: () {
                   ref.invalidate(internetCheckerNotifierPod);
                 },
-                child: const Text(
+                child: Text(
                   'Retry',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: context.appColors.error,
                   ),
                 )),
           ),

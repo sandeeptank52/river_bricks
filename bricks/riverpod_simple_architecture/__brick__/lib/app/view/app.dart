@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 import 'package:{{project_name.snakeCase()}}/core/router/auto_route_observer.dart';
 import 'package:{{project_name.snakeCase()}}/core/router/router_pod.dart';
 import 'package:{{project_name.snakeCase()}}/core/theme/app_theme.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_tokens.dart';
 import 'package:{{project_name.snakeCase()}}/core/theme/theme_controller.dart';
 import 'package:{{project_name.snakeCase()}}/i18n/strings.g.dart';
 import 'package:{{project_name.snakeCase()}}/shared/helper/global_helper.dart';
+import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/no_internet_widget.dart';
 {{#responsive}}import 'package:{{project_name.snakeCase()}}/shared/widget/responsive_wrapper.dart';
 {{/responsive}}
-import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
-import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
 
-///This class holds Material App or Cupertino App
-///with routing,theming and locale setup .
-///Also responsive framerwork used for responsive application
-///which auto resize or autoscale the app.
+///This class holds the ONE MaterialApp in the tree (router-driven), with
+///theming, locale setup, text-scale clamping and system-bar styling.
 class App extends ConsumerStatefulWidget {
   const App({super.key});
 
@@ -33,7 +32,6 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
     final currentTheme = ref.watch(themecontrollerProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      //TODO: change app name
       title: AppConfig.appTitle,
       theme: Themes.theme,
       darkTheme: Themes.darkTheme,
@@ -49,12 +47,12 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       builder: (context, child) {
         if (mounted) {
+{{#responsive}}
           ///Used for responsive design
           ///Here you can define breakpoint and how the responsive should work
-{{#responsive}}
           child = ResponsiveBreakPointWrapper(
-            firstFrameWidget: Container(
-              color: Colors.white,
+            firstFrameWidget: ColoredBox(
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: child!,
           );
@@ -62,42 +60,36 @@ class _AppState extends ConsumerState<App> with GlobalHelper {
 {{^responsive}}
           child = child!;
 {{/responsive}}
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
+          final tokens = AppTokens.of(context);
+          final isDark = theme.brightness == Brightness.dark;
 
-          /// Add support for maximum text scale according to changes in
-          /// accessibilty in sytem settings
+          /// Large-text users are supported up to the design-system target.
           final mediaquery = MediaQuery.of(context);
           child = MediaQuery(
             data: mediaquery.copyWith(
               textScaler: mediaquery.textScaler.clamp(
-                maxScaleFactor: 1,
+                maxScaleFactor: tokens.maxTextScale,
               ),
             ),
             child: child,
           );
 
-          /// Added annotate region by default to switch according to theme which
-          /// customize the system ui veray style
+          /// System bars follow the active Material color scheme.
           child = AnnotatedRegion<SystemUiOverlayStyle>(
-            value: currentTheme == ThemeMode.dark
-                ? SystemUiOverlayStyle.light.copyWith(
-                    statusBarColor: Colors.white.withValues(alpha: 0.4),
-                    systemNavigationBarColor: Colors.black,
-                    systemNavigationBarDividerColor: Colors.black,
-                    systemNavigationBarIconBrightness: Brightness.dark,
-                  )
-                : currentTheme == ThemeMode.light
-                    ? SystemUiOverlayStyle.dark.copyWith(
-                        statusBarColor: Colors.white.withValues(alpha: 0.4),
-                        systemNavigationBarColor: Colors.grey,
-                        systemNavigationBarDividerColor: Colors.grey,
-                        systemNavigationBarIconBrightness: Brightness.light,
-                      )
-                    : SystemUiOverlayStyle.dark.copyWith(
-                        statusBarColor: Colors.white.withValues(alpha: 0.4),
-                        systemNavigationBarColor: Colors.grey,
-                        systemNavigationBarDividerColor: Colors.grey,
-                        systemNavigationBarIconBrightness: Brightness.light,
-                      ),
+            value: (isDark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark)
+                .copyWith(
+              statusBarColor: colorScheme.surface.withValues(
+                alpha: tokens.systemOverlaySurfaceOpacity,
+              ),
+              systemNavigationBarColor: colorScheme.surface,
+              systemNavigationBarDividerColor: colorScheme.outlineVariant,
+              systemNavigationBarIconBrightness:
+                  isDark ? Brightness.light : Brightness.dark,
+            ),
             child: GestureDetector(
               child: child,
               onTap: () {

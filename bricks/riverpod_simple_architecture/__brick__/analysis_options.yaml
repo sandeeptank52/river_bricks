@@ -4,9 +4,19 @@ include: package:flutter_lints/flutter.yaml
 # custom_lint cannot yet be resolved alongside auto_route 11's generator
 # (analyzer version conflict). Once the ecosystem realigns, add custom_lint +
 # riverpod_lint to dev_dependencies and uncomment the plugin below.
+{{#backend_firebase}}
+analyzer:
+  exclude:
+    - firebase/functions/node_modules/**
+    - firebase/functions/lib/**
+#  plugins:
+#    - custom_lint
+{{/backend_firebase}}
+{{^backend_firebase}}
 # analyzer:
 #   plugins:
 #     - custom_lint
+{{/backend_firebase}}
 
 linter:
   rules:

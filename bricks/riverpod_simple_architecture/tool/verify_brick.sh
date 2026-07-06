@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: verify_brick.sh <project_name> <responsive:true|false> [--key value ...]
+# Usage: verify_brick.sh <project_name> <responsive:true|false> [--key value ...] [--config /path/vars.json]
 #
 # Materializes the brick into a throwaway Flutter project and verifies it:
 #   flutter create -> mason init -> mason add (local) -> mason make (with hooks) ->
@@ -10,11 +10,14 @@
 # CLI-flag notes (mason 0.1.3):
 #   - Variables are passed via --config-path JSON, NOT as --var_name flags.
 #   - mason add requires mason init first (no mason.yaml in a fresh flutter project).
-#   - pre_gen.dart is now non-interactive (no prompt() calls); hooks run normally.
+#   - pre_gen.dart is non-interactive (no prompt() calls); hooks run normally.
 #   - post_gen.dart runs pub get / slang / build_runner headlessly.
-#   - Extra --key value pairs override the defaults in the JSON config.
 #   - ALL declared brick vars must appear in the JSON to prevent Mason from
 #     interactively prompting for missing ones (fatal without a TTY).
+#   - Scalar --key value pairs override the defaults below. For the list vars
+#     (languages/features/routes/providers) pass a full JSON config via
+#     --config instead (project_name/responsive from the positional args are
+#     still injected if absent).
 
 set -euo pipefail
 
@@ -25,11 +28,16 @@ shift 2
 # Parse extra --key value pairs into a simple list of "key=value" entries.
 EXTRA_KEYS=()
 EXTRA_VALS=()
+CONFIG_OVERRIDE=""
 while [[ $# -gt 0 ]]; do
   key="${1:?expected --key}"
   val="${2:?expected value after $key}"
-  EXTRA_KEYS+=("${key#--}")
-  EXTRA_VALS+=("$val")
+  if [[ "$key" == "--config" ]]; then
+    CONFIG_OVERRIDE="$val"
+  else
+    EXTRA_KEYS+=("${key#--}")
+    EXTRA_VALS+=("$val")
+  fi
   shift 2
 done
 
@@ -56,50 +64,85 @@ echo "=== mason add $BRICK_NAME --path $BRICK_DIR ==="
 mason add "$BRICK_NAME" --path "$BRICK_DIR" >/dev/null 2>&1
 
 # ── 3. Write vars config JSON ─────────────────────────────────────────────────
-# Seed defaults for ALL declared brick vars so Mason never prompts interactively.
-# These match the defaults in brick.yaml. Caller overrides take precedence.
-_app_title=""
-_seed_color="3F51B5"
-_org="com.example"
-_app_description=""
-_author=""
-_support_email=""
-_privacy_url=""
-
-# Apply overrides from extra --key value args.
-for i in "${!EXTRA_KEYS[@]}"; do
-  k="${EXTRA_KEYS[$i]}"
-  v="${EXTRA_VALS[$i]}"
-  case "$k" in
-    app_title)       _app_title="$v" ;;
-    seed_color)      _seed_color="$v" ;;
-    org)             _org="$v" ;;
-    app_description) _app_description="$v" ;;
-    author)          _author="$v" ;;
-    support_email)   _support_email="$v" ;;
-    privacy_url)     _privacy_url="$v" ;;
-    # project_name and responsive are positional args handled above; ignore here.
-  esac
-done
-
 VARS_JSON="$WORK/.mason_vars.json"
-cat > "$VARS_JSON" << VARS_EOF
+
+if [[ -n "$CONFIG_OVERRIDE" ]]; then
+  # Caller-supplied full config; inject project_name/responsive when absent.
+  python3 - "$CONFIG_OVERRIDE" "$VARS_JSON" "$NAME" "$RESPONSIVE" <<'PYEOF'
+import json, sys
+src, dst, name, responsive = sys.argv[1:5]
+vars = json.load(open(src))
+vars.setdefault("project_name", name)
+vars.setdefault("responsive", responsive == "true")
+json.dump(vars, open(dst, "w"), indent=2)
+PYEOF
+else
+  # Seed defaults for ALL declared brick vars so Mason never prompts.
+  _app_title=""
+  _seed_color="3F51B5"
+  _org="com.example"
+  _app_description=""
+  _author=""
+  _support_email=""
+  _privacy_url=""
+  _terms_url=""
+  _refund_url=""
+  _api_base_url_development=""
+  _api_base_url_staging=""
+  _api_base_url_production=""
+  _backend="none"
+
+  # Apply overrides from extra --key value args (scalars only).
+  for i in "${!EXTRA_KEYS[@]}"; do
+    k="${EXTRA_KEYS[$i]}"
+    v="${EXTRA_VALS[$i]}"
+    case "$k" in
+      app_title)                _app_title="$v" ;;
+      seed_color)               _seed_color="$v" ;;
+      org)                      _org="$v" ;;
+      app_description)          _app_description="$v" ;;
+      author)                   _author="$v" ;;
+      support_email)            _support_email="$v" ;;
+      privacy_url)              _privacy_url="$v" ;;
+      terms_url)                _terms_url="$v" ;;
+      refund_url)               _refund_url="$v" ;;
+      api_base_url_development) _api_base_url_development="$v" ;;
+      api_base_url_staging)     _api_base_url_staging="$v" ;;
+      api_base_url_production)  _api_base_url_production="$v" ;;
+      backend)                  _backend="$v" ;;
+      # project_name and responsive are positional args handled above; the
+      # list vars need --config.
+    esac
+  done
+
+  cat > "$VARS_JSON" << VARS_EOF
 {
-  "project_name":    "$NAME",
-  "app_title":       "$_app_title",
-  "seed_color":      "$_seed_color",
-  "org":             "$_org",
-  "app_description": "$_app_description",
-  "author":          "$_author",
-  "support_email":   "$_support_email",
-  "privacy_url":     "$_privacy_url",
-  "responsive":      $RESPONSIVE
+  "project_name":             "$NAME",
+  "app_title":                "$_app_title",
+  "seed_color":               "$_seed_color",
+  "org":                      "$_org",
+  "app_description":          "$_app_description",
+  "author":                   "$_author",
+  "support_email":            "$_support_email",
+  "privacy_url":              "$_privacy_url",
+  "terms_url":                "$_terms_url",
+  "refund_url":               "$_refund_url",
+  "api_base_url_development": "$_api_base_url_development",
+  "api_base_url_staging":     "$_api_base_url_staging",
+  "api_base_url_production":  "$_api_base_url_production",
+  "backend":                  "$_backend",
+  "languages":                ["en"],
+  "features":                 [],
+  "routes":                   [],
+  "providers":                [],
+  "responsive":               $RESPONSIVE
 }
 VARS_EOF
+fi
 
 echo "=== vars JSON: $(cat "$VARS_JSON") ==="
 
-# ── 4. Generate brick WITH hooks (pre_gen is now non-interactive) ─────────────
+# ── 4. Generate brick WITH hooks (pre_gen is non-interactive) ─────────────────
 echo "=== mason make $BRICK_NAME ==="
 mason make "$BRICK_NAME" \
   --config-path "$VARS_JSON" \

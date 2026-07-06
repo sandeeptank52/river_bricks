@@ -1,8 +1,15 @@
 {
   "locale": "en",
-  "locale_en": "English",
-  "locale_es": "Spanish",
-  "counterAppBarTitle": "Counter",
+{{#languages}}
+  "locale_{{code}}": "{{display}}",
+{{/languages}}
+  "navigation": {
+    "notFound": {
+      "title": "Page not found",
+      "message": "The page you were looking for does not exist or has moved.",
+      "cta": "Go to safety"
+    }
+  },
   "settings": {
     "title": "Settings",
     "appearance": "Appearance",

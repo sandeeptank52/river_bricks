@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:{{project_name.snakeCase()}}/core/local_storage/app_storage_pod.dart';
+import 'package:{{project_name.snakeCase()}}/core/local_storage/storage_keys.dart';
 
 ///This provider stores the ThemeModeController
 final themecontrollerProvider =
@@ -12,7 +13,7 @@ final themecontrollerProvider =
 ///This controller class used change theme and
 ///get the intial theme from storage if its available
 class ThemeModeController extends Notifier<ThemeMode> {
-  final _themeKey = "theme";
+  final _themeKey = StorageKeys.themeMode;
 
   @override
   ThemeMode build() {

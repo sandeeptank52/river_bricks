@@ -30,129 +30,29 @@ Our architecture is structured around distinct layers, each with well-defined re
 ```
 ## Outputs 📦
 
-```txt
-📦lib
- ┣ 📂app
- ┃ ┣ 📂view
- ┃ ┃ ┗ 📜app.dart
- ┃ ┗ 📜app.dart
- ┣ 📂const
- ┃ ┣ 📜app_urls.dart
- ┃ ┗ 📜resource.dart
- ┣ 📂core
- ┃ ┣ 📂local_storage
- ┃ ┃ ┣ 📜app_storage.dart
- ┃ ┃ ┗ 📜app_storage_pod.dart
- ┃ ┣ 📂router
- ┃ ┃ ┣ 📜auto_route_observer.dart
- ┃ ┃ ┣ 📜router.dart
- ┃ ┃ ┣ 📜router.gr.dart
- ┃ ┃ ┗ 📜router_pod.dart
- ┃ ┗ 📂theme
- ┃ ┃ ┣ 📜app_theme.dart
- ┃ ┃ ┗ 📜theme_controller.dart
- ┣ 📂features
- ┃ ┣ 📂counter
- ┃ ┃ ┣ 📂controller
- ┃ ┃ ┃ ┣ 📂notifier
- ┃ ┃ ┃ ┃ ┗ 📜counter_notifier.dart
- ┃ ┃ ┃ ┗ 📜counter_state_pod.dart
- ┃ ┃ ┣ 📂view
- ┃ ┃ ┃ ┗ 📜counter_page.dart
- ┃ ┃ ┗ 📜counter.dart
- ┃ ┣ 📂splash
- ┃ ┃ ┣ 📂controller
- ┃ ┃ ┃ ┣ 📜box_encryption_key_pod.dart
- ┃ ┃ ┃ ┗ 📜future_initializer.dart
- ┃ ┃ ┗ 📂view
- ┃ ┃ ┃ ┗ 📜splash_view.dart
- ┃ ┗ 📂theme_segmented_btn
- ┃ ┃ ┣ 📂controller
- ┃ ┃ ┃ ┗ 📜selection_theme_pod.dart
- ┃ ┃ ┗ 📂view
- ┃ ┃ ┃ ┗ 📜theme_segmented_btn.dart
- ┣ 📂i18n
- ┃ ┣ 📜en.i18n.json
- ┃ ┣ 📜es.i18n.json
- ┃ ┣ 📜strings.g.dart
- ┃ ┣ 📜strings_en.g.dart
- ┃ ┗ 📜strings_es.g.dart
- ┣ 📂shared
- ┃ ┣ 📂api_client
- ┃ ┃ ┗ 📂dio
- ┃ ┃ ┃ ┣ 📜bad_certificate_fixer.dart
- ┃ ┃ ┃ ┣ 📜default_api_error_handler.dart
- ┃ ┃ ┃ ┣ 📜default_api_interceptor.dart
- ┃ ┃ ┃ ┣ 📜default_time_response_interceptor.dart
- ┃ ┃ ┃ ┣ 📜dio_client_provider.dart
- ┃ ┃ ┃ ┗ 📜form_data_interceptor.dart
- ┃ ┣ 📂exception
- ┃ ┃ ┗ 📜base_exception.dart
- ┃ ┣ 📂extension
- ┃ ┃ ┗ 📜response_success_error_handler.dart
- ┃ ┣ 📂helper
- ┃ ┃ ┗ 📜global_helper.dart
- ┃ ┣ 📂pods
- ┃ ┃ ┣ 📜internet_checker_pod.dart
- ┃ ┃ ┗ 📜translation_pod.dart
- ┃ ┣ 📂riverpod_ext
- ┃ ┃ ┣ 📜asynvalue_easy_when.dart
- ┃ ┃ ┣ 📜cache_extensions.dart
- ┃ ┃ ┣ 📜cancel_extensions.dart
- ┃ ┃ ┣ 📜riverpod_extensions.dart
- ┃ ┃ ┗ 📜riverpod_observer.dart
- ┃ ┗ 📂widget
- ┃ ┃ ┣ 📜app_locale_popup.dart
- ┃ ┃ ┣ 📜no_internet_widget.dart
- ┃ ┃ ┗ 📜responsive_wrapper.dart
- ┣ 📜bootstrap.dart
- ┣ 📜init.dart
- ┣ 📜main.dart
- ┣ 📜main_development.dart
- ┣ 📜main_production.dart
- ┣ 📜main_staging.dart
- ┗ 📜splasher.dart
+The definitive, always-current list of every file the brick emits lives in
+the brick's `MANIFEST.txt` (brick-owned file enumeration). Highlights of the
+generated layout:
 
-📦test
- ┣ 📂app
- ┃ ┗ 📂view
- ┃ ┃ ┗ 📜app_test.dart
- ┣ 📂core
- ┃ ┣ 📂storage
- ┃ ┃ ┗ 📜app_storage_test.dart
- ┃ ┗ 📂theme
- ┃ ┃ ┗ 📜theme_controller_pod_test.dart
- ┣ 📂features
- ┃ ┣ 📂counter
- ┃ ┃ ┣ 📂pod
- ┃ ┃ ┃ ┗ 📜counter_pod_test.dart
- ┃ ┃ ┗ 📂view
- ┃ ┃ ┃ ┗ 📜counter_page_test.dart
- ┃ ┗ 📂theme_segment_btn
- ┃ ┃ ┗ 📂view
- ┃ ┃ ┃ ┗ 📜theme_segment_btn_test.dart
- ┣ 📂helpers
- ┃ ┣ 📜helpers.dart
- ┃ ┗ 📜pump_app.dart
- ┣ 📂shared
- ┃ ┣ 📂api_client
- ┃ ┃ ┗ 📂dio
- ┃ ┃ ┃ ┗ 📜dio_client_provider_test.dart
- ┃ ┣ 📂exception
- ┃ ┃ ┣ 📜base_exception_test.dart
- ┃ ┃ ┗ 📜exception_test.dart
- ┃ ┣ 📂pods
- ┃ ┃ ┣ 📜internet_checker_pod_test.dart
- ┃ ┃ ┗ 📜translations_pod_test.dart
- ┃ ┣ 📂riverpod_ext
- ┃ ┃ ┣ 📜asynvalue_easywhen_test.dart
- ┃ ┃ ┗ 📜cache_extension_test.dart
- ┃ ┗ 📂widgets
- ┃ ┃ ┣ 📜app_locale_popup_test.dart
- ┃ ┃ ┗ 📜no_interenet_widget_test.dart
- ┣ 📜init_test.dart
- ┗ 📜widget_test.dart
+```txt
+lib/
+  main.dart / main_<flavor>.dart   # flavored entrypoints -> runFlavoredApp(AppEnv)
+  bootstrap.dart / init.dart       # single pre-runApp init path, one MaterialApp
+  const/                           # AppConfig (identity) + AppEnv (per-flavor config)
+  core/local_storage/              # encrypted Hive box, StorageKeys, SecureKvStore
+  core/router/                     # typed guarded route table, guard_state seam,
+                                   # placeholder pages, NotFound wildcard
+  core/theme/                      # brand_palette + AppTokens + AppColorTheme + Themes
+  features/splash/                 # routed splash resolver + NotFound page
+  features/settings/               # settings page, theme switch, about section
+  features/<feature>/              # var-driven skeletons (controller/, view/, barrel)
+  i18n/                            # var-driven language set (slang)
+  shared/                          # dio client, AppFailure, analytics facade,
+                                   # user-session scope, design-system widgets
+test/                              # mirrors lib/ 1:1 for everything brick-owned
+tool/                              # optional Firebase setup scripts
 ```
+
 ## 3. Layer Details
 
 ### 3.1. Presentation Layer

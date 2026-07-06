@@ -1,76 +1,94 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
-import 'package:{{project_name.snakeCase()}}/const/app_config.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_colors_ext.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_tokens.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/brand_palette.dart';
 
-///This class defines light theme and dark theme
-///Here we used flex color scheme
+/// Brand-driven light/dark themes (FlexColorScheme + ThemeExtensions).
+/// All hex values live in brand_palette.dart; dimensions in app_tokens.dart.
 class Themes {
-  static ThemeData get theme => FlexThemeData.light(
-        colors: FlexSchemeColor.from(
-          primary: AppConfig.seedColor,
-          brightness: Brightness.light,
+  static ThemeData get theme => _finish(
+        FlexThemeData.light(
+          colors: FlexSchemeColor(
+            primary: BrandPaletteLight.primary,
+            primaryContainer: BrandPaletteLight.primarySoft,
+            secondary: BrandPaletteLight.accentLink,
+            secondaryContainer: BrandPaletteLight.selectedTint,
+            tertiary: BrandPaletteLight.accentLink,
+            tertiaryContainer: BrandPaletteLight.selectedTint,
+            error: BrandPaletteLight.error,
+          ),
+          usedColors: 6,
+          surfaceMode: FlexSurfaceMode.level,
+          blendLevel: 0,
+          scaffoldBackground: BrandPaletteLight.background,
+          surface: BrandPaletteLight.surfaceCard,
+          subThemesData: _subThemes,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
-        blendLevel: 20,
-        appBarOpacity: 0.95,
-        swapColors: true,
-        tabBarStyle: FlexTabBarStyle.forBackground,
-
-        subThemesData: const FlexSubThemesData(
-          blendOnLevel: 20,
-          blendOnColors: false,
-          inputDecoratorRadius: 8,
-        ),
-        keyColors: const FlexKeyColors(
-          useSecondary: true,
-          useTertiary: true,
-        ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            // replace default CupertinoPageTransitionsBuilder with this
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          },
-        ),
-        visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        useMaterial3: true,
-
-        /// fontFamily: GoogleFonts.getFont('Lato').fontFamily,
-
-        ///
+        BrandPaletteLight.ink,
+        lightThemeExtensions,
       );
-  static ThemeData get darkTheme => FlexThemeData.dark(
-        colors: FlexSchemeColor.from(
-          primary: AppConfig.seedColor,
-          brightness: Brightness.dark,
+
+  static ThemeData get darkTheme => _finish(
+        FlexThemeData.dark(
+          colors: FlexSchemeColor(
+            primary: BrandPaletteDark.primary,
+            primaryContainer: BrandPaletteDark.primarySoft,
+            secondary: BrandPaletteDark.accentLink,
+            secondaryContainer: BrandPaletteDark.selectedTint,
+            tertiary: BrandPaletteDark.accentLink,
+            tertiaryContainer: BrandPaletteDark.selectedTint,
+            error: BrandPaletteDark.error,
+          ),
+          usedColors: 6,
+          surfaceMode: FlexSurfaceMode.level,
+          blendLevel: 0,
+          scaffoldBackground: BrandPaletteDark.background,
+          surface: BrandPaletteDark.surfaceCard,
+          subThemesData: _subThemes,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
-        blendLevel: 15,
-        appBarStyle: FlexAppBarStyle.background,
-        appBarOpacity: 0.90,
-        tabBarStyle: FlexTabBarStyle.forBackground,
-        subThemesData: const FlexSubThemesData(
-          blendOnLevel: 30,
-          inputDecoratorRadius: 8,
-        ),
-        keyColors: const FlexKeyColors(
-          useSecondary: true,
-          useTertiary: true,
-        ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            // replace default CupertinoPageTransitionsBuilder with this
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          },
-        ),
-        visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        useMaterial3: true,
-        // To use the playground font, add GoogleFonts package and uncomment
-        // fontFamily: GoogleFonts.getFont('Lato').fontFamily,
+        BrandPaletteDark.ink,
+        darkThemeExtensions,
       );
-// If you do not have a themeMode switch, uncomment this line
-// to let the device system mode control the theme mode:
-// themeMode: ThemeMode.system,
+
+  static const _subThemes = FlexSubThemesData(
+    elevatedButtonRadius: 28,
+    filledButtonRadius: 28,
+    outlinedButtonRadius: 28,
+    inputDecoratorRadius: 28,
+    inputDecoratorBorderType: FlexInputBorderType.outline,
+    inputDecoratorUnfocusedBorderIsColored: false,
+    cardRadius: 16,
+    dialogRadius: 24,
+    bottomSheetRadius: 24,
+  );
+
+  static ThemeData _finish(
+    ThemeData base,
+    Color ink,
+    List<ThemeExtension<dynamic>> extensions,
+  ) {
+    final scheme = base.colorScheme.copyWith(onSurface: ink);
+    return base.copyWith(
+      colorScheme: scheme,
+      appBarTheme: base.appBarTheme.copyWith(
+        backgroundColor: base.scaffoldBackgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        foregroundColor: ink,
+      ),
+      // Predictive back on Android (post_gen also opts the manifest in);
+      // Cupertino transitions keep the iOS edge-swipe gesture working.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+        },
+      ),
+      extensions: [...extensions, AppTokens.standard()],
+    );
+  }
 }

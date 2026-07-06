@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_colors_ext.dart';
 
 /// This one is extension `when` extension on AsyncValue
 /// with some default loading,error widget and
@@ -114,13 +115,13 @@ class DefaultErrorWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.red,
+                        color: context.appColors.error,
                         width: 2,
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
-                      color: Colors.red,
+                      color: context.appColors.error,
                     ),
                   ),
                 ),
@@ -130,7 +131,7 @@ class DefaultErrorWidget extends StatelessWidget {
                     child: Text(
                       'Something went wrong! ',
                       style: TextStyle(
-                        color: Colors.red,
+                        color: context.appColors.error,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -205,13 +206,15 @@ class DefaultDioErrorWidget extends StatelessWidget {
         child: switch (dioError.type) {
           DioExceptionType.connectionTimeout => Text(
               'Connection Timeout Error',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: context.appColors.error),
             ),
           DioExceptionType.sendTimeout => Text(
               'Unable to connect to the server.Please try again later.',
             ),
           DioExceptionType.receiveTimeout =>
             Text('Check you internet connection reliability.'),
+          DioExceptionType.transformTimeout =>
+            Text('Processing the response took too long.'),
           DioExceptionType.badCertificate =>
             Text('Please update your OS or add certificate.'),
           DioExceptionType.badResponse =>

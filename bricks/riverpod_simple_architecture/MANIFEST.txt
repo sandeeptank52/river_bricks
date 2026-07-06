@@ -1,0 +1,149 @@
+# Brick-owned file enumeration — every file `mason make` emits into the host
+# app (after hooks), relative to the app root. Format: <path>[<TAB><condition>]
+# Conditions: responsive (only when responsive=true),
+#             per-language (one per selected language; {lang} placeholder,
+#                           'en' variants are always present),
+#             per-feature (one per features[] entry; {feature} placeholder),
+#             per-feature-data (only for features with data=true),
+#             generated (created by post_gen codegen — slang/build_runner).
+# The host `flutter create` project provides everything else (android/, ios/,
+# platform config); post_gen PATCHES (never creates) android/ and ios/ files:
+#   android/app/build.gradle(.kts) applicationId, AndroidManifest android:label
+#   + android:enableOnBackInvokedCallback, ios/Runner.xcodeproj bundle id,
+#   ios/Runner/Info.plist CFBundleDisplayName.
+.env.example
+.gitignore
+.vscode/extensions.json
+.vscode/launch.json
+analysis_options.yaml
+architecture/architecture.md
+build.yaml
+pubspec.yaml
+riverpod_simple_architecture.md
+tool/firebase_gradle_patch.dart
+tool/setup_firebase.sh
+tool/templates/firebase_crash_reporter.dart.tmpl
+lib/app/app.dart
+lib/app/view/app.dart
+lib/bootstrap.dart
+lib/const/app_config.dart
+lib/const/app_env.dart
+lib/const/app_urls.dart
+lib/const/resource.dart
+lib/core/local_storage/app_storage.dart
+lib/core/local_storage/app_storage_pod.dart
+lib/core/local_storage/box_encryption_key.dart
+lib/core/local_storage/secure_kv_store.dart
+lib/core/local_storage/storage_keys.dart
+lib/core/router/auto_route_observer.dart
+lib/core/router/guard_state.dart
+lib/core/router/guards.dart
+lib/core/router/placeholder_pages.dart
+lib/core/router/route_placeholder_page.dart
+lib/core/router/router.dart
+lib/core/router/router.gr.dart	generated
+lib/core/router/router_pod.dart
+lib/core/theme/app_color_theme.dart
+lib/core/theme/app_colors_ext.dart
+lib/core/theme/app_theme.dart
+lib/core/theme/app_tokens.dart
+lib/core/theme/brand_palette.dart
+lib/core/theme/theme_controller.dart
+lib/features/settings/controller/package_info_pod.dart
+lib/features/settings/controller/selection_theme_pod.dart
+lib/features/settings/view/about_section.dart
+lib/features/settings/view/settings_page.dart
+lib/features/settings/view/theme_segmented_btn.dart
+lib/features/splash/view/not_found_page.dart
+lib/features/splash/view/splash_page.dart
+lib/features/{feature}/{feature}.dart	per-feature
+lib/features/{feature}/controller/.gitkeep	per-feature
+lib/features/{feature}/view/.gitkeep	per-feature
+lib/features/{feature}/data/.gitkeep	per-feature-data
+lib/i18n/en.i18n.json
+lib/i18n/{lang}.i18n.json	per-language
+lib/i18n/strings.g.dart	generated
+lib/i18n/strings_en.g.dart	generated
+lib/i18n/strings_{lang}.g.dart	per-language
+lib/init.dart
+lib/main.dart
+lib/main_development.dart
+lib/main_production.dart
+lib/main_staging.dart
+lib/shared/api_client/dio/bad_certificate_fixer.dart
+lib/shared/api_client/dio/default_api_error_handler.dart
+lib/shared/api_client/dio/default_api_interceptor.dart
+lib/shared/api_client/dio/default_time_response_interceptor.dart
+lib/shared/api_client/dio/dio_client_provider.dart
+lib/shared/api_client/dio/form_data_interceptor.dart
+lib/shared/exception/app_failure.dart
+lib/shared/exception/base_exception.dart
+lib/shared/extension/response_success_error_handler.dart
+lib/shared/helper/global_helper.dart
+lib/shared/helper/launcher_helper.dart
+lib/shared/observability/analytics/analytics_client.dart
+lib/shared/observability/analytics/analytics_client_pod.dart
+lib/shared/observability/crash_reporter.dart
+lib/shared/observability/crash_reporter_pod.dart
+lib/shared/observability/error_handlers.dart
+lib/shared/pods/internet_checker_pod.dart
+lib/shared/pods/persisted_state_contract.dart
+lib/shared/pods/translation_pod.dart
+lib/shared/pods/user_session_scope.dart
+lib/shared/riverpod_ext/async_failure_message.dart
+lib/shared/riverpod_ext/asynvalue_easy_when.dart
+lib/shared/riverpod_ext/cache_extensions.dart
+lib/shared/riverpod_ext/cancel_extensions.dart
+lib/shared/riverpod_ext/riverpod_extensions.dart
+lib/shared/riverpod_ext/riverpod_observer/riverpod_log.dart
+lib/shared/riverpod_ext/riverpod_observer/riverpod_obs.dart
+lib/shared/riverpod_ext/riverpod_observer/talker_riverpod_settings.dart
+lib/shared/riverpod_ext/state_management_conventions.dart
+lib/shared/widget/app_bottom_sheet_scaffold.dart
+lib/shared/widget/app_category_chip_row.dart
+lib/shared/widget/app_locale_popup.dart
+lib/shared/widget/app_playable_list_tile.dart
+lib/shared/widget/app_primary_button.dart
+lib/shared/widget/app_selectable_card.dart
+lib/shared/widget/async_value_view.dart
+lib/shared/widget/design_system_components.dart
+lib/shared/widget/no_internet_widget.dart
+lib/shared/widget/responsive_wrapper.dart	responsive
+lib/shared/widget/settings_button.dart
+test/app/view/app_test.dart
+test/core/local_storage/app_storage_test.dart
+test/core/local_storage/box_encryption_key_test.dart
+test/core/router/router_test.dart
+test/core/theme/app_theme_test.dart
+test/core/theme/hardcoded_visual_values_test.dart
+test/core/theme/theme_controller_pod_test.dart
+test/features/settings/view/about_section_test.dart
+test/features/settings/view/settings_page_test.dart
+test/features/{feature}/.gitkeep	per-feature
+test/helpers/helpers.dart
+test/helpers/notifier_tester.dart
+test/helpers/pump_app.dart
+test/init_test.dart
+test/shared/api_client/dio/dio_client_provider_test.dart
+test/shared/exception/app_failure_test.dart
+test/shared/exception/base_exception_test.dart
+test/shared/exception/exception_test.dart
+test/shared/observability/analytics/analytics_client_test.dart
+test/shared/observability/crash_reporter_test.dart
+test/shared/observability/error_handlers_test.dart
+test/shared/pods/internet_checker_pod_test.dart
+test/shared/pods/persisted_state_contract_test.dart
+test/shared/pods/translations_pod_test.dart
+test/shared/pods/user_session_scope_test.dart
+test/shared/riverpod_ext/async_failure_message_test.dart
+test/shared/riverpod_ext/asynvalue_easywhen_test.dart
+test/shared/riverpod_ext/cache_extension_test.dart
+test/shared/riverpod_ext/riverpod_observer_test.dart
+test/shared/riverpod_ext/state_management_conventions_test.dart
+test/shared/widget/app_locale_popup_test.dart
+test/shared/widget/async_value_view_test.dart
+test/shared/widget/design_system_components_test.dart
+test/shared/widget/no_internet_widget_test.dart
+test/shared/widget/settings_button_test.dart
+test/tool/firebase_gradle_patch_test.dart
+test/widget_test.dart
