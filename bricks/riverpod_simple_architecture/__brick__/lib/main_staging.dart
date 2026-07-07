@@ -1,6 +1,5 @@
+import 'package:{{project_name.snakeCase()}}/bootstrap.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_env.dart';
 
-/// This entry point should be used for staging only
-void main() {
-  ///You can override your environment variable in bootstrap method here for providers
- // bootstrap(() => const App());
-}
+/// Staging entry point: `flutter run -t lib/main_staging.dart`
+Future<void> main() => runFlavoredApp(AppEnv.staging);

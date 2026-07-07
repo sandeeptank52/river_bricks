@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:{{project_name.snakeCase()}}/core/theme/app_colors_ext.dart';
 
 ///This mixin used for showing dialogs,overlay,bootomsheet,snackbars which automatically disposed
 ///when the stateful class use this class disposes.s
@@ -64,7 +65,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
     showCustomOverlay(
       context: context,
       builder: (context) => ColoredBox(
-        color: Colors.black54,
+        color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.54),
         child: Center(
           child: AnimatedBuilder(
             animation: _animationController!.view,
@@ -125,7 +126,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
       await context.showFlash<S>(
         builder: (context, controller) => FlashBar(
           controller: controller,
-          indicatorColor: Colors.red,
+          indicatorColor: context.appColors.error,
           icon: const Icon(Icons.tips_and_updates_outlined),
           title: title,
           content: content,
@@ -165,15 +166,15 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
             controller: controller,
             margin: const EdgeInsets.all(32.0),
             behavior: FlashBehavior.floating,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
               side: BorderSide(
-                color: Colors.yellow,
+                color: context.appColors.warningSurface,
                 strokeAlign: BorderSide.strokeAlignInside,
               ),
             ),
             clipBehavior: Clip.antiAlias,
-            indicatorColor: Colors.amber,
+            indicatorColor: context.appColors.warningSurface,
             title: title,
             icon: icon,
             content: content,
@@ -189,7 +190,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
     FlashPosition position = FlashPosition.bottom,
     Duration duration = const Duration(seconds: 3),
     Icon? icon = const Icon(Icons.error_outline),
-    Color? indicatorColor = const Color(0xFFE57373),
+    Color? indicatorColor,
     Widget Function(BuildContext, FlashController<T>)? primaryActionBuilder,
   }) {
     if (context.mounted) {
@@ -198,7 +199,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
         duration: duration,
         position: position,
         icon: icon,
-        indicatorColor: indicatorColor,
+        indicatorColor: indicatorColor ?? context.appColors.error,
         primaryActionBuilder: showCloseIcon
             ? primaryActionBuilder ??
                 (context, controller) {
@@ -218,7 +219,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
     FlashPosition position = FlashPosition.bottom,
     Duration duration = const Duration(seconds: 3),
     Icon? icon = const Icon(Icons.info_outline),
-    Color? indicatorColor = const Color(0xFF64B5F6),
+    Color? indicatorColor,
     Widget Function(BuildContext, FlashController<T>)? primaryActionBuilder,
   }) {
     if (context.mounted) {
@@ -227,7 +228,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
         duration: duration,
         position: position,
         icon: icon,
-        indicatorColor: indicatorColor,
+        indicatorColor: indicatorColor ?? context.appColors.accentLink,
         primaryActionBuilder: showCloseIcon
             ? primaryActionBuilder ??
                 (context, controller) {
@@ -247,7 +248,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
     FlashPosition position = FlashPosition.bottom,
     Duration duration = const Duration(seconds: 3),
     Icon? icon = const Icon(Icons.check_circle_outline),
-    Color? indicatorColor = const Color(0xFF81C784),
+    Color? indicatorColor,
     Widget Function(BuildContext, FlashController<T>)? primaryActionBuilder,
   }) {
     if (context.mounted) {
@@ -256,7 +257,7 @@ mixin GlobalHelper<T extends StatefulWidget> on State<T> {
         duration: duration,
         position: position,
         icon: icon,
-        indicatorColor: indicatorColor,
+        indicatorColor: indicatorColor ?? context.appColors.onSuccessSurface,
         primaryActionBuilder: showCloseIcon
             ? primaryActionBuilder ??
                 (context, controller) {

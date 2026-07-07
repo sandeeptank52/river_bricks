@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Building Recipe Book — Flutter planning system</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#161922; --panel2:#1c2030; --ink:#e8eaf0; --muted:#9aa3b2;
+    --line:#2a2f3e; --accent:#6366f1; --accent2:#818cf8; --code:#cbd5e1;
+    --must:#10b981; --rec:#38bdf8; --opt:#f59e0b; --avoid:#94a3b8; --danger:#fb7185;
+    --maxw:1180px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:#222838;color:var(--code);padding:.1em .4em;border-radius:5px;border:1px solid #2c3346}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* hero */
+  header.hero{padding:72px 0 56px;background:
+     radial-gradient(900px 400px at 80% -10%,rgba(99,102,241,.28),transparent 60%),
+     radial-gradient(700px 360px at 0% 0%,rgba(56,189,248,.14),transparent 55%);
+     border-bottom:1px solid var(--line)}
+  .kicker{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);
+     border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:999px;margin-bottom:22px}
+  h1{font-size:clamp(32px,5vw,52px);line-height:1.05;margin:0 0 18px;letter-spacing:-.02em;font-weight:800}
+  h1 .grad{background:linear-gradient(90deg,#a5b4fc,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:760px;margin:0 0 26px}
+  .pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .pill{font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+  .pill b{color:var(--accent2)}
+
+  /* layout with sticky nav */
+  .shell{display:grid;grid-template-columns:236px 1fr;gap:40px;align-items:start;padding:44px 0 80px}
+  nav.toc{position:sticky;top:20px;font-size:14px;border-left:2px solid var(--line);padding-left:0}
+  nav.toc .tt{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:0 0 10px 16px}
+  nav.toc a{display:block;color:var(--muted);padding:6px 0 6px 16px;border-left:2px solid transparent;margin-left:-2px}
+  nav.toc a:hover{color:var(--ink);text-decoration:none;border-left-color:var(--accent)}
+  main{min-width:0}
+  section{padding:14px 0 40px;border-bottom:1px solid var(--line);scroll-margin-top:18px}
+  section:last-child{border-bottom:0}
+  h2{font-size:27px;letter-spacing:-.01em;margin:18px 0 6px;font-weight:750}
+  h2 .num{font-family:var(--mono);font-size:15px;color:var(--accent);margin-right:10px}
+  h3{font-size:18px;margin:26px 0 8px;font-weight:700}
+  p{margin:10px 0}
+  .sub{color:var(--muted)}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0}
+  .note.warn{border-left-color:var(--danger)}
+  ul.clean{margin:10px 0;padding-left:20px}
+  ul.clean li{margin:6px 0}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .step .n{font-family:var(--mono);color:var(--accent);font-size:13px}
+  .step h4{margin:8px 0 6px;font-size:16px}
+  .step p{margin:0;font-size:14px;color:var(--muted)}
+
+  /* badges */
+  .badge{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.03em;padding:3px 9px;border-radius:6px;white-space:nowrap;text-transform:uppercase;border:1px solid transparent}
+  .b-must{background:rgba(16,185,129,.14);color:var(--must);border-color:rgba(16,185,129,.35)}
+  .b-rec{background:rgba(56,189,248,.13);color:var(--rec);border-color:rgba(56,189,248,.35)}
+  .b-opt{background:rgba(245,158,11,.14);color:var(--opt);border-color:rgba(245,158,11,.35)}
+  .b-avoid{background:rgba(148,163,184,.13);color:var(--avoid);border-color:rgba(148,163,184,.32)}
+  .brick{color:var(--must);font-weight:700}
+  .nob{color:var(--muted)}
+
+  /* tables */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+  th,td{text-align:left;padding:11px 14px;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:var(--panel2);color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0}
+  tbody tr:nth-child(odd){background:rgba(255,255,255,.012)}
+  tbody tr:hover{background:rgba(99,102,241,.07)}
+  td.slug code{background:transparent;border:0;padding:0;color:var(--accent2);font-weight:600}
+  td.pkg{font-family:var(--mono);font-size:12.5px;color:var(--code)}
+  .ctr{text-align:center}
+
+  /* filter */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0}
+  .fbtn{cursor:pointer;font-family:var(--mono);font-size:12.5px;background:var(--panel);color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 13px}
+  .fbtn:hover{color:var(--ink)}
+  .fbtn[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .count{font-size:13px;color:var(--muted);margin-left:4px}
+
+  /* cards */
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:18px 0}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h4{margin:0 0 4px;font-size:17px}
+  .card .tag{font-family:var(--mono);font-size:11px;color:var(--accent2)}
+  .card ul{margin:10px 0 0;padding-left:18px;font-size:14px;color:var(--muted)}
+  .card ul li{margin:4px 0}
+  .card .kv{font-size:13px;color:var(--muted);margin-top:10px}
+  .card .kv b{color:var(--ink);font-weight:600}
+  .mono-list code{display:inline-block;margin:2px 4px 2px 0}
+
+  footer{padding:30px 0 70px;color:var(--muted);font-size:13px}
+  @media (max-width:880px){
+    .shell{grid-template-columns:1fr;gap:0}
+    nav.toc{display:none}
+    .steps{grid-template-columns:1fr 1fr}
+    .grid2,.grid3{grid-template-columns:1fr}
+  }
+  @media print{
+    body{background:#fff;color:#000}
+    nav.toc,.filters{display:none}
+    header.hero{background:#fff}
+    section{border-color:#ccc;page-break-inside:avoid}
+    .card,.step,.note,.tablewrap{border-color:#bbb}
+    a{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">Flutter · Mason brick · planning system</span>
+    <h1>App Building <span class="grad">Recipe Book</span></h1>
+    <p class="lede">A reusable planning layer for the <code>riverpod_simple_architecture</code> brick. Claude interviews you about a new app, selects the right ingredients via a deterministic decision matrix, and writes a tailored base product plan — <b>it never builds the app</b>.</p>
+    <div class="pills">
+      <span class="pill"><b>30</b> classified ingredients</span>
+      <span class="pill"><b>4</b> app-type recipes</span>
+      <span class="pill"><b>9</b> must-have baseline</span>
+      <span class="pill">Output: <b>plan only</b></span>
+      <span class="pill">Invoke: <code>/flutter-app-planner</code></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="shell">
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="tt">Contents</div>
+    <a href="#overview">Overview</a>
+    <a href="#how">How it works</a>
+    <a href="#foundation">Solid-default baseline</a>
+    <a href="#catalog">Ingredient catalog</a>
+    <a href="#matrix">Decision matrix</a>
+    <a href="#recipes">App-type recipes</a>
+    <a href="#backend">Backend recipes</a>
+    <a href="#money">Monetization</a>
+    <a href="#quality">Analytics · Security · QA</a>
+    <a href="#interview">The interview</a>
+    <a href="#use">Use &amp; extend</a>
+  </nav>
+
+  <main>
+
+    <section id="overview">
+      <h2><span class="num">00</span>What this is</h2>
+      <p>The Recipe Book is documentation plus one committed Claude skill (<code>flutter-app-planner</code>) that turns the question <em>“what kind of app is this?”</em> into an auditable list of ingredients and a written base product plan. It is meant to be used <b>before</b> any code is written.</p>
+      <ul class="clean">
+        <li><b>Plan-only.</b> The planner emits two files — <code>base-product-plan.md</code> and <code>ingredient-checklist.md</code> — and stops. No scaffolding, no code generation, no <code>brick.yaml</code> manifest.</li>
+        <li><b>Portable.</b> Everything lives in-repo (<code>docs/app-recipe-book/</code> + <code>.claude/skills/</code>), so any developer who clones the brick gets it for free — no personal setup.</li>
+        <li><b>Deterministic.</b> The same interview answers always yield the same ingredient set.</li>
+        <li><b>Readiness bar = “Solid default.”</b> Every generated plan ships a production baseline; heavier modules are added only when the app calls for them.</li>
+      </ul>
+    </section>
+
+    <section id="how">
+      <h2><span class="num">01</span>How it works</h2>
+      <div class="steps">
+        <div class="step"><div class="n">STEP 1</div><h4>Interview</h4><p>Ask the 13 questions, one cluster at a time, to characterise the app.</p></div>
+        <div class="step"><div class="n">STEP 2</div><h4>Decide</h4><p>Apply the decision matrix: 9 must-haves + app-type bundle + per-answer signals − conflicts.</p></div>
+        <div class="step"><div class="n">STEP 3</div><h4>Emit</h4><p>Write <code>base-product-plan.md</code> + <code>ingredient-checklist.md</code> into the new project.</p></div>
+        <div class="step"><div class="n">STEP 4</div><h4>Stop</h4><p>Hand back to the developer. The app is built separately from the plan.</p></div>
+      </div>
+      <div class="note">The planner reads <code>ingredient-catalog.md</code> (definitions), <code>decision-matrix.md</code> (the engine), <code>production-foundation.md</code> (the baseline), and the recipe docs. The interview script is embedded in <code>SKILL.md</code> so it works even with no docs open.</div>
+    </section>
+
+    <section id="foundation">
+      <h2><span class="num">02</span>The “Solid default” baseline</h2>
+      <p class="sub">Nine <span class="badge b-must">must-have</span> ingredients ship in every generated plan, regardless of app type. Items marked <span class="brick">brick</span> are already provided by the brick.</p>
+      <div class="grid3">
+        <div class="card"><h4>crash-reporting <span class="brick">· brick</span></h4><p class="card kv">Crashlytics + <code>wireCrashHandlers</code> route framework &amp; zone errors.</p></div>
+        <div class="card"><h4>analytics</h4><p class="card kv">Decisions on data, not gut feel. Default <code>firebase_analytics</code>.</p></div>
+        <div class="card"><h4>ci-cd</h4><p class="card kv">Repeatable builds &amp; store uploads. GitHub Actions.</p></div>
+        <div class="card"><h4>automated-testing <span class="brick">· brick helper</span></h4><p class="card kv">Refactor without fear. <code>testNotifier</code> helper provided.</p></div>
+        <div class="card"><h4>store-readiness</h4><p class="card kv">Icons, splashes, bundle IDs, metadata automation.</p></div>
+        <div class="card"><h4>privacy-basics</h4><p class="card kv">Policy + consent (GDPR/CCPA/India), ATT, deletion.</p></div>
+        <div class="card"><h4>secure-storage <span class="brick">· brick</span></h4><p class="card kv">Tokens/keys in <code>flutter_secure_storage</code>, not prefs.</p></div>
+        <div class="card"><h4>observability-talker <span class="brick">· brick</span></h4><p class="card kv">Structured logging that survives production.</p></div>
+        <div class="card"><h4>theming-settings <span class="brick">· brick</span></h4><p class="card kv"><code>flex_color_scheme</code> + Settings/About on <code>/settings</code>.</p></div>
+      </div>
+    </section>
+
+    <section id="catalog">
+      <h2><span class="num">03</span>Ingredient catalog</h2>
+      <p class="sub">All 29 ingredients, each classified into one tier. Filter by tier:</p>
+      <div class="filters" id="filters">
+        <button class="fbtn" data-f="all" aria-pressed="true">all · 30</button>
+        <button class="fbtn" data-f="must">must-have · 9</button>
+        <button class="fbtn" data-f="rec">recommended · 7</button>
+        <button class="fbtn" data-f="opt">optional · 10</button>
+        <button class="fbtn" data-f="avoid">avoid-unless-needed · 4</button>
+      </div>
+      <p class="count" id="count"></p>
+      <div class="tablewrap">
+        <table id="catalog">
+          <thead><tr><th>Ingredient</th><th>Tier</th><th class="ctr">Brick</th><th>Primary package / service</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr data-tier="must"><td class="slug"><code>crash-reporting</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">firebase_crashlytics</td><td>Production crashes are invisible without a crash reporter.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>analytics</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_analytics</td><td>Without it you ship on gut feel instead of evidence.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>ci-cd</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">GitHub Actions</td><td>Manual builds break the first time someone’s out or rushed.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>automated-testing</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">flutter_test + testNotifier</td><td>The only sustainable way to refactor without regressions.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>store-readiness</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">flutter_launcher_icons + fastlane</td><td>Stores have technical gates distinct from product quality.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>privacy-basics</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">app_tracking_transparency + UMP</td><td>GDPR/CCPA/India require policy, consent &amp; deletion.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>secure-storage</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">flutter_secure_storage</td><td>Prefs are readable on rooted devices &amp; in backups.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>observability-talker</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">talker_flutter</td><td><code>print()</code> statements vanish in production.</td></tr>
+            <tr data-tier="must"><td class="slug"><code>theming-settings</code></td><td><span class="badge b-must">must-have</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">flex_color_scheme</td><td>Users expect light/dark mode &amp; accessible type.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>authentication</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_auth</td><td>Accounts enable personalisation, sync &amp; entitlements.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>onboarding</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">introduction_screen</td><td>Users who miss the value prop in 30s churn.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>deep-links</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">app_links</td><td>Let emails, push &amp; shares open a specific screen.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>remote-config</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_remote_config</td><td>Change behaviour without a store release.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>performance-monitoring</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_performance</td><td>See latency &amp; slow starts, not just crashes.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>local-database</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">hive_ce</td><td>Offline access, fast reads, caching across restarts.</td></tr>
+            <tr data-tier="rec"><td class="slug"><code>localization</code></td><td><span class="badge b-rec">recommended</span></td><td class="ctr"><span class="brick">✓</span></td><td class="pkg">slang</td><td>Multi-language is table stakes for India/EU; retrofitting i18n later is painful.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>payments-revenuecat</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">purchases_flutter</td><td>Stores mandate IAP for digital goods/subscriptions.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>payments-cashfree</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">flutter_cashfree_pg_sdk + server</td><td>Compliant India gateway for real-world goods/services.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>push-notifications</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_messaging</td><td>The primary mobile re-engagement channel.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>offline-support</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">connectivity_plus + hive_ce</td><td>Mobile networks are unreliable.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>cloud-sync</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">Firestore / Supabase</td><td>Switch devices &amp; reinstall without losing work.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>feature-flags</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">firebase_remote_config</td><td>Ship dark, enable gradually, roll back instantly.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>referral-system</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">flutter_branch_sdk / app_links</td><td>One of the highest-ROI consumer growth channels.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>ai-integration</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">anthropic_sdk_dart / dart_openai</td><td>Increasingly a core product differentiator.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>experimentation-ab</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">Firebase A/B Testing</td><td>Decide by data, not opinion.</td></tr>
+            <tr data-tier="opt"><td class="slug"><code>ads</code></td><td><span class="badge b-opt">optional</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">google_mobile_ads</td><td>Viable for free utility/content apps with volume.</td></tr>
+            <tr data-tier="avoid"><td class="slug"><code>admin-panel-cms</code></td><td><span class="badge b-avoid">avoid-unless-needed</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">Retool / Directus</td><td>Only when non-devs must manage content/users/ops.</td></tr>
+            <tr data-tier="avoid"><td class="slug"><code>rate-limiting</code></td><td><span class="badge b-avoid">avoid-unless-needed</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">Redis / Cloud Functions</td><td>One bad client can exhaust quota or your AI bill.</td></tr>
+            <tr data-tier="avoid"><td class="slug"><code>background-jobs</code></td><td><span class="badge b-avoid">avoid-unless-needed</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">workmanager</td><td>Periodic sync/fetch — but heavy &amp; platform-limited.</td></tr>
+            <tr data-tier="avoid"><td class="slug"><code>security-hardening-advanced</code></td><td><span class="badge b-avoid">avoid-unless-needed</span></td><td class="ctr"><span class="nob">—</span></td><td class="pkg">cert pinning + --obfuscate</td><td>Raises the bar for sophisticated attackers.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="matrix">
+      <h2><span class="num">04</span>Decision matrix</h2>
+      <p class="sub">Final set = <code>{9 must-haves} ∪ {app-type bundle} ∪ {signal rows}</code> − <code>{conflict exclusions}</code>, then add triggered prerequisites.</p>
+
+      <h3>Base bundle by app type <span class="sub">(on top of the 9 must-haves)</span></h3>
+      <div class="tablewrap"><table><thead><tr><th>App type</th><th>Adds</th></tr></thead><tbody>
+        <tr><td>Utility / tools</td><td class="sub">nothing required — monetization is a per-signal choice</td></tr>
+        <tr><td>Content / feed</td><td><code>deep-links</code> <code>remote-config</code> <code>performance-monitoring</code></td></tr>
+        <tr><td>Productivity / notes</td><td><code>local-database</code> <code>offline-support</code> <code>onboarding</code></td></tr>
+        <tr><td>Subscription / SaaS / AI</td><td><code>authentication</code> <code>payments-revenuecat</code> <code>remote-config</code> <code>onboarding</code></td></tr>
+      </tbody></table></div>
+
+      <h3>Per-answer signals</h3>
+      <div class="tablewrap"><table><thead><tr><th>Interview answer → yes</th><th>Adds</th></tr></thead><tbody>
+        <tr><td>Has user accounts?</td><td><code>authentication</code></td></tr>
+        <tr><td>Sells digital subscription / unlock?</td><td><code>payments-revenuecat</code> <code>store-readiness</code></td></tr>
+        <tr><td>Takes direct payments (physical/services, India)?</td><td><code>payments-cashfree</code></td></tr>
+        <tr><td>Works offline?</td><td><code>offline-support</code> <code>local-database</code></td></tr>
+        <tr><td>Cloud sync across devices?</td><td><code>cloud-sync</code> <span class="sub">(needs authentication)</span></td></tr>
+        <tr><td>Real-time data?</td><td class="sub">backend choice — Firestore / Supabase Realtime</td></tr>
+        <tr><td>Uses AI features?</td><td><code>ai-integration</code> <code>rate-limiting</code></td></tr>
+        <tr><td>Gradual rollout / kill-switch?</td><td><code>feature-flags</code> <code>remote-config</code></td></tr>
+        <tr><td>Growth: referrals / A-B?</td><td><code>referral-system</code> <code>experimentation-ab</code> <span class="sub">(referral needs deep-links)</span></td></tr>
+        <tr><td>Ad-supported free app?</td><td><code>ads</code></td></tr>
+        <tr><td>Admin / content management?</td><td><code>admin-panel-cms</code></td></tr>
+        <tr><td>Push notifications?</td><td><code>push-notifications</code></td></tr>
+      </tbody></table></div>
+
+      <h3>Conflict &amp; prerequisite rules</h3>
+      <ul class="clean">
+        <li><b>Digital goods → RevenueCat, never Cashfree.</b> A third-party gateway for digital content violates store policy and risks removal.</li>
+        <li><b>Local-only backend</b> → drop <code>cloud-sync</code> (and usually <code>authentication</code>); keep offline-support &amp; local-database.</li>
+        <li><b>ads selected</b> → must implement the ATT prompt (iOS 14.5+) and Google UMP consent.</li>
+        <li><b>ai-integration</b> → always pair with <code>rate-limiting</code> (AI bills spike fast). Its <span class="badge b-avoid">avoid-unless-needed</span> tier means “don’t add gratuitously” — AI is exactly when it <em>is</em> needed.</li>
+        <li><b>referral-system</b> → always add <code>deep-links</code> (attribution must survive a fresh install).</li>
+      </ul>
+    </section>
+
+    <section id="recipes">
+      <h2><span class="num">05</span>App-type recipes</h2>
+      <p class="sub">Each recipe = the 9 must-haves + this bundle + whatever the interview signals add.</p>
+      <div class="grid2">
+        <div class="card"><span class="tag">leanest</span><h4>Utility / tools</h4>
+          <div class="kv"><b>Adds:</b> nothing required</div>
+          <div class="kv"><b>Backend:</b> often local-only</div>
+          <div class="kv"><b>Monetize:</b> ads or one-time unlock</div>
+          <ul><li>9 must-haves are enough to ship a solid tool</li><li>Engagement/monetization layers are per-signal</li></ul>
+        </div>
+        <div class="card"><span class="tag">read-heavy</span><h4>Content / feed</h4>
+          <div class="kv"><b>Adds:</b> <code>deep-links</code> <code>remote-config</code> <code>performance-monitoring</code></div>
+          <div class="kv"><b>Backend:</b> Firebase or a CMS/API</div>
+          <ul><li>Links drive discoverability; config tunes the feed without releases</li><li>Image-heavy lists need perf monitoring</li></ul>
+        </div>
+        <div class="card"><span class="tag">offline-first</span><h4>Productivity / notes</h4>
+          <div class="kv"><b>Adds:</b> <code>local-database</code> <code>offline-support</code> <code>onboarding</code></div>
+          <div class="kv"><b>Backend:</b> local-only → optional cloud-sync</div>
+          <ul><li>Losing a user’s writing is unforgivable</li><li>Cloud-sync + auth added when multi-device matters</li></ul>
+        </div>
+        <div class="card"><span class="tag">heaviest</span><h4>Subscription / SaaS / AI</h4>
+          <div class="kv"><b>Adds:</b> <code>authentication</code> <code>payments-revenuecat</code> <code>remote-config</code> <code>onboarding</code></div>
+          <div class="kv"><b>Backend:</b> Firebase / Supabase / custom</div>
+          <ul><li>Entitlements follow the user; store IAP for digital goods</li><li>AI → <code>ai-integration</code> + <code>rate-limiting</code></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="backend">
+      <h2><span class="num">06</span>Backend recipes</h2>
+      <p class="sub">Backend is chosen per app. <b>Firebase is the lean default</b> (it matches the brick’s Crashlytics work).</p>
+      <div class="grid2">
+        <div class="card"><h4>Firebase <span class="tag">· default</span></h4><ul><li>Auth, Firestore, Functions, FCM, Remote Config, Crashlytics</li><li>Realtime via Firestore streams; fast start; generous free tier</li><li>Best for: quick start + realtime</li></ul></div>
+        <div class="card"><h4>Supabase</h4><ul><li>Postgres + Row-Level Security + Realtime + Storage + Edge Functions</li><li>Best for: relational/SQL data, SQL-native teams</li></ul></div>
+        <div class="card"><h4>Custom REST / GraphQL</h4><ul><li>Typed client (dio + retrofit / ferry); JWT auth</li><li>Best for: an existing server or full control</li></ul></div>
+        <div class="card"><h4>Local-only</h4><ul><li><code>hive_ce</code> (brick); no accounts, no sync</li><li>Clean upgrade path to a backend later</li></ul></div>
+      </div>
+    </section>
+
+    <section id="money">
+      <h2><span class="num">07</span>Monetization</h2>
+      <p class="sub">Two payment paths are fundamentally different — do not conflate them.</p>
+      <div class="grid3">
+        <div class="card"><h4>RevenueCat <span class="tag">store IAP</span></h4>
+          <div class="kv"><b>For:</b> digital goods &amp; subscriptions <em>inside</em> the app</div>
+          <div class="kv"><b>Pkg:</b> <code>purchases_flutter</code></div>
+          <ul><li>Required by App Store / Play for digital content</li><li>Hosts receipts/entitlements — no server needed for basic flows</li><li>Always implement “restore purchases”</li></ul>
+        </div>
+        <div class="card"><h4>Cashfree <span class="tag">direct gateway</span></h4>
+          <div class="kv"><b>For:</b> real-world goods/services, India market</div>
+          <div class="kv"><b>Pkg:</b> <code>flutter_cashfree_pg_sdk</code> + server</div>
+          <ul><li><b>Server required:</b> create order → SDK collects → verify webhook → fulfill</li><li>Never confirm fulfillment on the client; KYC + PCI care</li><li>Not for digital goods (store rejection)</li></ul>
+        </div>
+        <div class="card"><h4>Ads <span class="tag">AdMob</span></h4>
+          <div class="kv"><b>For:</b> free utility/content apps</div>
+          <div class="kv"><b>Pkg:</b> <code>google_mobile_ads</code></div>
+          <ul><li>ATT (iOS) + GDPR/UMP consent before personalized ads</li><li>Use test ad unit IDs in development</li></ul>
+        </div>
+      </div>
+      <div class="note warn"><b>Conflict rule:</b> if you sell digital subscriptions or in-app unlocks, use <b>RevenueCat (store IAP)</b> — <b>not</b> Cashfree. Cashfree is for physical/real-world transactions.</div>
+    </section>
+
+    <section id="quality">
+      <h2><span class="num">08</span>Analytics · Security · Testing · Release</h2>
+      <div class="grid2">
+        <div class="card"><h4>Analytics events</h4><ul>
+          <li>snake_case, verb_noun; default sink <code>firebase_analytics</code></li>
+          <li>Core: <code>app_open</code>, <code>screen_view</code>, <code>sign_up</code>/<code>login</code>, <code>error_shown</code>, <code>settings_changed</code></li>
+          <li>Per type: <code>tool_run</code> · <code>content_view</code>/<code>search_performed</code> · <code>item_created</code>/<code>sync_completed</code> · <code>paywall_view</code>/<code>purchase_completed</code>/<code>ai_request</code></li>
+        </ul></div>
+        <div class="card"><h4>Security checklist</h4><ul>
+          <li><b>Secrets:</b> no keys in source/history (<code>--dart-define</code>, server-held)</li>
+          <li><b>Storage:</b> sensitive data in secure storage, not prefs</li>
+          <li><b>Transport:</b> HTTPS only; cert pinning only if the threat model needs it</li>
+          <li><b>Payments/PII:</b> never confirm payment on the client; minimise PII</li>
+          <li><b>Web:</b> <code>flutter_secure_storage</code> is <em>not</em> secure on web (localStorage) — keep tokens off the client</li>
+          <li><b>Account deletion:</b> in-app deletion is required when you offer accounts (Apple 5.1.1(v) — hard rejection)</li>
+        </ul></div>
+        <div class="card"><h4>Testing strategy</h4><ul>
+          <li>Notifier unit tests via <code>testNotifier</code> (brick helper)</li>
+          <li>Widget tests for key screens; <code>flutter analyze</code> clean in CI</li>
+          <li>Add per ingredient: payments restore, offline conflict, AI cost-guard</li>
+          <li>Don’t over-test generated code (<code>*.g.dart</code>, <code>router.gr.dart</code>)</li>
+        </ul></div>
+        <div class="card"><h4>Release checklist</h4><ul>
+          <li><b>Metadata:</b> name, description, keywords, screenshots, icon, version</li>
+          <li><b>Privacy:</b> policy URL live; App Store / Play data labels; ATT/UMP</li>
+          <li><b>CI/CD gates:</b> analyze + test green; apk + ios builds pass; Crashlytics symbols uploaded</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <section id="interview">
+      <h2><span class="num">09</span>The interview <span class="sub">(13 questions)</span></h2>
+      <p class="sub">Asked one cluster at a time; every answer maps to a decision-matrix signal.</p>
+      <div class="tablewrap"><table><thead><tr><th class="ctr">#</th><th>Question</th></tr></thead><tbody>
+        <tr><td class="ctr">1</td><td>App type? <span class="sub">Utility · Content · Productivity · Subscription/SaaS/AI</span></td></tr>
+        <tr><td class="ctr">2</td><td>User accounts?</td></tr>
+        <tr><td class="ctr">3</td><td>Monetization? <span class="sub">none · digital (RevenueCat) · direct India (Cashfree) · ads</span></td></tr>
+        <tr><td class="ctr">4</td><td>Works offline?</td></tr>
+        <tr><td class="ctr">5</td><td>Cloud sync across devices?</td></tr>
+        <tr><td class="ctr">6</td><td>Real-time data?</td></tr>
+        <tr><td class="ctr">7</td><td>AI features?</td></tr>
+        <tr><td class="ctr">8</td><td>Gradual rollout / kill-switch?</td></tr>
+        <tr><td class="ctr">9</td><td>Growth: referrals / A-B tests?</td></tr>
+        <tr><td class="ctr">10</td><td>Push notifications?</td></tr>
+        <tr><td class="ctr">11</td><td>Admin / content management?</td></tr>
+        <tr><td class="ctr">12</td><td>Backend preference? <span class="sub">Firebase (default) · Supabase · custom · local-only</span></td></tr>
+        <tr><td class="ctr">13</td><td>Regulatory scope? <span class="sub">PII, regions, compliance</span></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="use">
+      <h2><span class="num">10</span>Use &amp; extend</h2>
+      <h3>How to use</h3>
+      <ul class="clean">
+        <li>Run <code>/flutter-app-planner</code> (committed skill) — or paste <code>claude-starter-prompt.md</code> into any chat.</li>
+        <li>Answer the interview; the planner writes <code>base-product-plan.md</code> + <code>ingredient-checklist.md</code> into your new project.</li>
+        <li>Build the app from the plan using the brick + the checked ingredients.</li>
+        <li>See <a href="example-plan.md">example-plan.md</a> for a complete worked output (a subscription AI app).</li>
+      </ul>
+      <h3>How to extend</h3>
+      <ul class="clean">
+        <li><b>New ingredient</b> → add a classified entry to <code>ingredient-catalog.md</code>, then wire it into <code>decision-matrix.md</code> and any relevant recipe.</li>
+        <li><b>New app type</b> → add a recipe section + a base-bundle row in <code>decision-matrix.md</code>.</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<footer>
+  <div class="wrap">App Building Recipe Book · planning layer for the <code>riverpod_simple_architecture</code> Mason brick · plan-only, in-repo, deterministic. <br>Last reviewed 2026-06 — package recommendations are a snapshot; verify versions on pub.dev.</div>
+</footer>
+
+<script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('#catalog tbody tr'));
+  var btns=[].slice.call(document.querySelectorAll('#filters .fbtn'));
+  var count=document.getElementById('count');
+  function apply(f){
+    var shown=0;
+    rows.forEach(function(r){
+      var ok=(f==='all'||r.getAttribute('data-tier')===f);
+      r.style.display=ok?'':'none'; if(ok)shown++;
+    });
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-f')===f?'true':'false');});
+    count.textContent='Showing '+shown+' of '+rows.length+' ingredients.';
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-f'));});});
+  apply('all');
+})();
+</script>
+</body>
+</html>

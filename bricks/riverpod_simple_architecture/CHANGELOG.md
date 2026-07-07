@@ -1,3 +1,23 @@
+# 3.1.0
+
+**G01–G04 scaffold-parity release — the brick now generates the full AppStudio foundation (structure, conventions, env, typed guarded router, theme token system) and is var-driven from a resolved stack.**
+
+### Added
+- 🧭 **Var-driven typed route table** (`routes` var): guarded routes (`OnboardingGuard`/`AuthGuard` with injected `NavigationStateReader`), the `guard_state.dart` single re-point seam (mock/storage-backed), placeholder `@RoutePage` pages, routed `SplashPage` resolver, and a `*` NotFound wildcard with recovery CTA.
+- 🎨 **Theme token system**: `brand_palette.dart` (seeded from `seed_color`; the ONLY brand-hex file), `AppTokens`, `AppColorTheme` (+ `context.appColors`), registered in light AND dark themes; `PredictiveBackPageTransitionsBuilder` on Android (manifest opt-in patched by post_gen), Cupertino on iOS.
+- 🧩 **Five design-system components** + barrel: `AppSelectableCard`, `AppPrimaryButton` (enabled/disabled/loading), `AppCategoryChipRow`, `AppPlayableListTile`, `AppBottomSheetScaffold` — themed exclusively through tokens, with light/dark/overflow (320dp × textScale 2.0) tests.
+- 🧱 **Foundation seams**: sealed `AppFailure` hierarchy + `AppFailure.from`, analytics facade (`AnalyticsClient` + Noop/Recording impls, no SDK deps), `userSessionProvider` logout-generation scope, `PersistedStateStore`/`PersistedStateKeys` contract, `AsyncValueView` + failure-message mapper, `StorageKeys` registry, `SecureKvStore` + `obtainBoxEncryptionKey`, state-management conventions doc-in-code.
+- 🌐 **Flavors + AppEnv**: live `main_<flavor>.dart` entrypoints → `runFlavoredApp(AppEnv)`; per-flavor `api_base_url_*` vars; `dioProvider` fails fast on an empty base URL.
+- 🌍 **Var-driven language set** (`languages` var) and **feature skeletons** (`features` var, controller/view/barrel + mirrored test dir).
+- 🔐 `.env.example` (provider blocks from the `providers` var) and `.gitignore` secret rules (firebase lines when `backend=firebase`); conditional analyzer excludes.
+- 🍏 **iOS identity patching** in post_gen (bundle id + `CFBundleDisplayName`) — Android and iOS are co-equal.
+- 📜 `MANIFEST.txt`: the brick-owned file enumeration (drift-checkable).
+
+### Removed / Fixed
+- 🗑️ Removed the demo `counter` and `theme_segmented_btn` features (theme switch moved into settings), the dead flavored mains, `splasher.dart`'s duplicate MaterialApp, and the `randomuser.me` demo baseUrl.
+- 🐛 Fixed the `'appBox'` box-name mismatch via `StorageKeys`; realigned the test tree 1:1 with lib/ (incl. the `no_interenet_widget_test.dart` typo); textScaler clamp raised to `tokens.maxTextScale`; hardcoded widget colors re-routed through tokens (enforced by a brand-guard test).
+- 📦 The brick no longer ships generated files (`router.gr.dart`, `strings*.g.dart`) — post_gen regenerates them for the selected language set.
+
 # 3.0.0
 
 **Modernization release — brings the template to current best practices and latest stable dependencies. Contains breaking changes.**

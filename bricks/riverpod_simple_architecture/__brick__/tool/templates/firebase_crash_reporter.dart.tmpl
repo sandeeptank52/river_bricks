@@ -1,0 +1,29 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:{{project_name.snakeCase()}}/shared/observability/crash_reporter.dart';
+
+/// [CrashReporter] backed by Firebase Crashlytics. Installed by
+/// tool/setup_firebase.sh.
+class FirebaseCrashReporter implements CrashReporter {
+  FirebaseCrashReporter([FirebaseCrashlytics? crashlytics])
+      : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance;
+
+  final FirebaseCrashlytics _crashlytics;
+
+  @override
+  Future<void> recordError(Object error, StackTrace? stack,
+          {bool fatal = false, String? reason}) =>
+      _crashlytics.recordError(error, stack, fatal: fatal, reason: reason);
+
+  @override
+  Future<void> recordFlutterError(FlutterErrorDetails details,
+          {bool fatal = false}) =>
+      _crashlytics.recordFlutterError(details, fatal: fatal);
+
+  @override
+  Future<void> log(String message) => _crashlytics.log(message);
+
+  @override
+  Future<void> setCustomKey(String key, Object value) =>
+      _crashlytics.setCustomKey(key, value);
+}

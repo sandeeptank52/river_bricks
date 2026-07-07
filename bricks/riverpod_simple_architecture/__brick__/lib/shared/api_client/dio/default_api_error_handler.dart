@@ -49,6 +49,13 @@ Future<void> defaultAPIErrorHandler(
               ),
         );
       }
+    case DioExceptionType.transformTimeout:
+      handler.resolve(
+        Response(
+          data: {'detail': 'processing the response is slow'},
+          requestOptions: err.requestOptions,
+        ),
+      );
     case DioExceptionType.cancel:
       handler.resolve(
         Response(

@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:{{project_name.snakeCase()}}/splasher.dart';
+import 'package:{{project_name.snakeCase()}}/main_production.dart' as production;
 
-/// This entry point should be used for production only
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(child: Splasher()),
-  );
-}
+/// Default entry point (`flutter run` / store builds) — production flavor.
+/// Use `-t lib/main_development.dart` for day-to-day development.
+Future<void> main() => production.main();

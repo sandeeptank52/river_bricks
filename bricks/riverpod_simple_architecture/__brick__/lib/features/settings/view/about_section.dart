@@ -27,7 +27,7 @@ class AboutSection extends ConsumerWidget {
     final t = ref.watch(translationsPod);
     final packageInfo = ref.watch(packageInfoPod);
     return Material(
-      color: Colors.transparent,
+      type: MaterialType.transparency,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

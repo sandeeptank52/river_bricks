@@ -1,6 +1,5 @@
+import 'package:{{project_name.snakeCase()}}/bootstrap.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_env.dart';
 
-/// This entry point should be used for development only
-void main() {
-  ///You can override your environment variable in bootstrap method here for providers
-  // bootstrap(() => const App());
-}
+/// Development entry point: `flutter run -t lib/main_development.dart`
+Future<void> main() => runFlavoredApp(AppEnv.development);

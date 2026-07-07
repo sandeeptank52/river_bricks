@@ -8,7 +8,8 @@ import 'package:{{project_name.snakeCase()}}/core/local_storage/app_storage_pod.
 import 'package:{{project_name.snakeCase()}}/features/settings/controller/package_info_pod.dart';
 import 'package:{{project_name.snakeCase()}}/features/settings/view/about_section.dart';
 import 'package:{{project_name.snakeCase()}}/features/settings/view/settings_page.dart';
-import 'package:{{project_name.snakeCase()}}/features/theme_segmented_btn/view/theme_segmented_btn.dart';
+import 'package:{{project_name.snakeCase()}}/const/app_env.dart';
+import 'package:{{project_name.snakeCase()}}/features/settings/view/theme_segmented_btn.dart';
 import 'package:{{project_name.snakeCase()}}/i18n/strings.g.dart';
 import 'package:{{project_name.snakeCase()}}/shared/pods/translation_pod.dart';
 import 'package:{{project_name.snakeCase()}}/shared/widget/app_locale_popup.dart';
@@ -36,6 +37,7 @@ void main() {
       container: ProviderContainer(
         overrides: [
           appBoxProvider.overrideWithValue(appBox),
+          appEnvPod.overrideWithValue(AppEnv.development),
           translationsPod.overrideWith((ref) => AppLocale.en.buildSync()),
           packageInfoPod.overrideWith((ref) => fakeInfo),
         ],
